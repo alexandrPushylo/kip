@@ -18,6 +18,7 @@ from manager.models import WorkDayTabel
 from manager.utilities import WEEKDAY
 from manager.utilities import TODAY
 from manager.utilities import TOMORROW
+from manager.utilities import MONTH
 from manager.utilities import set_locale
 from manager.utilities import choice_day
 from manager.utilities import dict_Staff
@@ -909,7 +910,8 @@ def show_start_page(request):
 
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
     out['TODAY'] = TODAY#.strftime('%d %B')
-    out["DAY"] = current_day.strftime('%d %B')
+    out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
+
     out["WEEKDAY_TODAY"] = WEEKDAY[TODAY.weekday()]
     out["WEEKDAY"] = WEEKDAY[current_day.weekday()] if selected_day == 'next_day' else WEEKDAY[TODAY.weekday()]
     out["TOMORROW"] = TOMORROW.strftime('%d %B')
