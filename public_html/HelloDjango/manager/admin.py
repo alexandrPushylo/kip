@@ -5,6 +5,7 @@ from manager.models import TechnicDriver, DriverTabel, TechnicTabel
 from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply, Staff
 from manager.models import Technic, TechnicStatus, TechnicName, TechnicType
 from manager.models import WorkDayTabel
+from manager.models import Variable
 
 # Register your models here.
 admin.site.register(ApplicationTechnic)
@@ -33,4 +34,7 @@ admin.site.register(TechnicStatus)
 admin.site.register(TechnicName)
 admin.site.register(TechnicType)
 admin.site.register(TechnicTabel)
+
+admin.site.register(Variable)
+
 

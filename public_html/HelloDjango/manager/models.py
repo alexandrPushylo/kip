@@ -207,3 +207,11 @@ class ApplicationTechnic(models.Model):
         verbose_name_plural = "Заявки на технику"
 
 
+class Variable(models.Model):
+    name = models.CharField(max_length=256, verbose_name='Название переменной')
+    value = models.CharField(max_length=512, null=True, blank=True, verbose_name='Значение переменной')
+    flag = models.BooleanField(default=False, verbose_name='Флаг переменной')
+    def __str__(self): return f'{self.name} {self.value} [{self.flag}]'
+    class Meta:
+        verbose_name = "Переменная"
+        verbose_name_plural = "Переменные"
