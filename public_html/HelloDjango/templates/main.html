@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container container-fluid mx-auto">
+
+    <div class="container mt-3">
+        <h3 class="text-center m-0">
+            {% if CH_DAY == 'next_day' %}
+                <a href="{% url 'application_list' 'current_day' %}" class="btn " aria-current="page">
+                Сегодня <
+                </a>
+                {{ DAY }}
+            {% else %}
+                {{ DAY }}
+                <a href="{% url 'application_list' 'next_day' %}" class="btn fw-light" aria-current="page">
+                > Следующий рабочий день
+                </a>
+            {% endif %}
+
+        </h3>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+        {% for a in today_applications_list %}
+        <div class="col-auto">
+
+        <div class="card shadow-lg
+            {% if  a.app_today.status.status  == 'Сохранена' %}
+                border-warning
+            {% elif a.app_today.status.status == 'Одобрена' %}
+                border-success
+            {% else %}
+                border-dark
+            {% endif %}
+
+            "
+             style="width: 18rem; margin-bottom:15px; background-color: rgba(247,247,248,0.75)">
+
+          <label style="white-space: nowrap" class="position-absolute top-0 start-50 translate-middle bg-white rounded border border-2
+                {% if  a.app_today.status.status  == 'Сохранена' %}
+                    text-warning border-warning
+                {% elif a.app_today.status.status == 'Одобрена' %}
+                    text-success border-success
+                {% else %}
+                    text-dark border-dark
+                {% endif %}
+                fw-bold text-lowercase">Заявка {{ a.app_today.status.status }}</label>
+
+
+          <div class="card-body mt-1" >
+            <h6 class="card-title" >{{a.app_today.construction_site.address}} ({{ a.app_today.construction_site.foreman.user.last_name }})</h6>
+            <h6 class="card-title" >{{a.app_today.date}}</h6>
+          {% if a.apps_tech %}
+          <hr style="border-width: medium; border-color: green">
+              <h6 class="card-text"><label><b>Список техники:</b></label> </h6>
+              {% for v in a.apps_tech %}
+                <h6 class="card-text"
+                        {% if v.technic_driver.technic.name.name in conflicts_vehicles_list %}
+                        style="color: red"
+                        {% elif v.id in conf_app_id_list %}
+                        style="color: red"
+                        {% endif %}
+                >{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }}
+                    {% if v.technic_driver.id in work_TD_list  %} <i class="fa-sharp fa-solid fa-circle-exclamation"></i>{% endif %})
+                </h6>
+                  {% if v.description %}
+                <textarea class="form-control app_description" readonly>{{ v.description }}</textarea>
+                {%endif%}
+                  <hr>
+
+              {% endfor %}
+          {% endif %}
+            <div class="btn-group ">
+                <a href="{% url 'show_info_application' a.app_today.id %}" class="btn btn-outline-primary  m-1" aria-current="page"><i class="fa-solid fa-circle-info"></i></a>
+                <a href="{% url 'add_application' a.app_today.id %}" class="btn btn-outline-primary  m-1" aria-current="page"><i class="fa-regular fa-pen-to-square"></i></a>
+                <a href="{% url 'clear_application' a.app_today.id %}" class="btn btn-outline-danger  m-1" aria-current="page"><i class="fa-solid fa-trash"></i></a>
+                {% if  a.app_today.status.status  == 'Сохранена' or post  == 'Администратор' and a.app_today.status.status  == 'Подана' %}
+                <a href="{% url 'success_application' a.app_today.id %}" class="btn btn-outline-success  m-1" aria-current="page"><i class="fa-solid fa-check"></i></a>
+                {% endif %}
+
+            </div>
+          </div>
+        </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}{% load static %}
+    <script src="{% static "admin/js/scripts/main.js" %}"></script>
+{% endblock %}
+
+{% block bottom_panel %}
+<div class="input-group d-flex justify-content-center align-items-center">
+
+
+    {% if post == 'Администратор' %}
+    {% if conflicts_vehicles_list %}
+        <a href="{% url 'conflict_resolution' CH_DAY %}"  class="btn btn-danger active " aria-current="page">Конфликты</a>
+        <a href="{% url 'approv_all_applications' CH_DAY %}"  class="btn btn-outline-success " aria-current="page">Утвердить все</a>
+    {% else %}
+
+        <a href="{% url 'approv_all_applications' CH_DAY %}"  class="btn btn-success active " aria-current="page">Одобрить все</a>
+    {% endif %}
+    {% endif %}
+
+    {% if post == 'Прораб' or post == 'Мастер' %}
+        <a href="{% url 'submitted_all_applications' CH_DAY %}"  class="btn btn-success active " aria-current="page">Подать все заявки</a>
+    {% endif %}
+
+    <a href="{% url 'show_today_applications' CH_DAY  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
+</div>
+{% endblock %}
+

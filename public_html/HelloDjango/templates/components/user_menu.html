@@ -1,0 +1,48 @@
+<div class="dropdown">
+    <button class="btn btn-outline-light dropdown-toggle btn-md" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <b>{{ user.last_name }}</b>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end dropdown-menu">
+
+        {% if post == 'Администратор' %}
+            <li><a class="dropdown-item" href="">Администратор</a></li>
+            <hr>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'show_staff' %}">Персонал</a></li>
+
+            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_workday' 'currweek' %}">Табель(Рабочие дни)</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' CH_DAY %}">Табель(Водители)</a></li>
+
+            <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' CH_DAY %}">Техника-Водитель</a></li>
+
+
+            <li><a class="dropdown-item fw-bolder" href="{% url 'construction_sites' %}">Объекты</a></li>
+
+
+
+
+        {% elif post == 'Прораб' or post == 'Мастер' %}
+            <li><a class="dropdown-item" href="">Прораб</a></li>
+            <hr>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'construction_sites' %}">Объекты</a></li>
+
+        {% elif post == 'Механик' %}
+            <li><a class="dropdown-item" href="">Механик</a></li>
+
+
+        {% elif post == 'Снабжение' %}
+            <li><a class="dropdown-item" href="">Снабжение</a></li>
+
+
+        {% elif post == 'Водитель' %}
+            <li><a class="dropdown-item" href="">Водитель</a></li>
+
+        {% endif %}
+
+        <hr>
+
+        <li><a class="dropdown-item" href="{% url 'show_today_applications' CH_DAY  %}">Заявки на {{ DAY }}</a></li>
+
+        <hr>
+        <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
+    </ul>
+</div>
