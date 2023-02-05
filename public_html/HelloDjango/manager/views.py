@@ -11,6 +11,7 @@ from manager.models import TechnicDriver, DriverTabel
 from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply, Staff
 from manager.models import Technic, TechnicStatus, TechnicName, TechnicType, TechnicTabel
 from manager.models import WorkDayTabel
+from manager.models import Variable
 
 # from manager.forms import CreateNewApplicationForm
 
@@ -911,7 +912,6 @@ def show_start_page(request):
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
     out['TODAY'] = TODAY#.strftime('%d %B')
     out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
-
     out["WEEKDAY_TODAY"] = WEEKDAY[TODAY.weekday()]
     out["WEEKDAY"] = WEEKDAY[current_day.weekday()] if selected_day == 'next_day' else WEEKDAY[TODAY.weekday()]
     out["TOMORROW"] = TOMORROW.strftime('%d %B')
