@@ -6,6 +6,7 @@ from random import choice
 ONE_DAY = timedelta(days=1)
 STATUS_APPLICATION = {"Подтвержден", "Не подтвержден", "Отменен"}
 WEEKDAY = ("Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье")
+MONTH = ('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября','декабря')
 TODAY = date.today()
 TOMORROW = TODAY + ONE_DAY
 choice_day = {'today': TODAY, 'next_day': TOMORROW}
