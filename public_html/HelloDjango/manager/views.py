@@ -233,46 +233,61 @@ def edit_staff_view(request, id_staff):# TODO:FIX
     current_user = User.objects.get(id=id_staff)
     out['current_user'] = current_user
 
-
-
-
     post_list = dict_Staff
     out['post_list'] = post_list
 
     foreman_list = StaffForeman.objects.values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
-
-    out['current_post'] = get_current_post(current_user)
+    current_post = get_current_post(current_user, key=True)
+    out['current_post'] = current_post
+    if is_master(current_user):
+        out['current_foreman'] = StaffMaster.objects.get(user=current_user).foreman.user.id
 
 
 
     if request.method == 'POST':
-        out['POST'] = request.POST
-        current_staff = Staff.objects.get(id=id_staff)
-        selected_user = User.objects.get(id = current_staff.user.id)
+        print(request.POST)
+        selected_user = User.objects.get(id=id_staff)
+        if request.POST.get('post') != current_post:
+            get_current_post(selected_user).delete()
 
-        foreman = request.POST['foreman']
-        if foreman == 'self':
-            id_foreman = current_staff.user.id
-        elif foreman:
-            id_foreman = foreman
-        else:
-            id_foreman = None
+
+        if request.POST['post'] == 'master':
+            foreman = StaffForeman.objects.get(user=request.POST['foreman'])
+            staff, _ = StaffMaster.objects.get_or_create(user=selected_user)
+            staff.foreman = foreman
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'admin':
+            staff, _ = StaffAdmin.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'foreman':
+            staff, _ = StaffForeman.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'driver':
+            staff, _ = StaffDriver.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'mechanic':
+            staff, _ = StaffMechanic.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'employee_supply':
+            staff, _ = StaffSupply.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+
+        selected_user.username = request.POST['username']
+        selected_user.first_name = request.POST['first_name']
+        selected_user.last_name = request.POST['last_name']
 
         if request.POST['new_password']:
             selected_user.set_password(request.POST['new_password'])
         else:
             selected_user.password = request.POST['old_password']
-
-        selected_user.username = request.POST['username']
-
-        selected_user.first_name = request.POST['first_name']
-        selected_user.last_name = request.POST['last_name']
-        current_staff.telephone = request.POST['telephone']
-        current_staff.post = Post.objects.get(post=request.POST['post'])
-        current_staff.id_foreman = id_foreman
         selected_user.save()
-        current_staff.save()
 
         return HttpResponseRedirect('/show_staff/')
 

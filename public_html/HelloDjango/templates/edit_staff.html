@@ -35,7 +35,7 @@
 
         <div class="mt-3">
             <label>Должность</label>
-            <input type="hidden" id="io_post" value="">
+            <input type="hidden" id="io_post" value="{{ current_post }}">
             <select class=" col-auto" required id="post_select" name="post">
                          {% for post in post_list.items %}
                             <option value="{{ post.0 }}">{{ post.1 }}</option>
@@ -44,7 +44,7 @@
         </div>
         <div class="mt-3 cl_foreman" >
             <label>Прораб</label>
-            <input type="hidden" name="foreman" id="io_foreman" value="{{ current_post.foreman }}">
+            <input type="hidden" name="foreman" id="io_foreman" value="{{ current_foreman }}">
             <select class=" col-auto" id="foreman_select">
                         {% for foreman in foreman_list %}
                             <option value="{{ foreman.0 }}">{{ foreman.1 }} {{ foreman.2 }}</option>
