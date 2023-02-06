@@ -733,6 +733,13 @@ def signin_view(request):
     return render(request, 'signin.html', out)
 
 
+def del_staff(request, id_staff):
+    user = User.objects.get(id=id_staff)
+    get_current_post(user).delete()
+    user.delete()
+    return HttpResponseRedirect('/show_staff/')
+
+
 def signup_view(request):
     out = {
         'TODAY': TODAY,

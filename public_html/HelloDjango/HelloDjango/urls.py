@@ -40,6 +40,7 @@ from manager.views import add_construction_sites_view
 
 from manager.views import show_staff_view
 from manager.views import edit_staff_view
+from manager.views import del_staff
 
 from manager.views import tabel_driver_view
 from manager.views import tabel_workday_view
@@ -61,6 +62,8 @@ urlpatterns = [
 
     path('show_staff/', show_staff_view, name='show_staff'),
     path('edit_staff/<int:id_staff>', edit_staff_view, name='edit_staff'),
+    path('del_staff/<int:id_staff>', del_staff, name='del_staff'),
+
 
     path('tabel_driver/<str:ch_day>', tabel_driver_view, name='tabel_driver'),
     path('tabel_workday/<str:ch_week>', tabel_workday_view, name='tabel_workday'),
