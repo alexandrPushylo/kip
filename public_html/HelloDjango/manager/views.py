@@ -873,18 +873,21 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
             l.append(i)
     return l
 
-def get_current_post(user):
+def get_current_post(user, key=False):
     if is_admin(user):
-        current_staff = StaffAdmin.objects.get(user=user)
+        current_staff, post = StaffAdmin.objects.get(user=user), 'admin'
     elif is_foreman(user):
-        current_staff = StaffForeman.objects.get(user=user)
+        current_staff, post = StaffForeman.objects.get(user=user), 'foreman'
     elif is_master(user):
-        current_staff = StaffMaster.objects.get(user=user)
+        current_staff, post = StaffMaster.objects.get(user=user), 'master'
     elif is_driver(user):
-        current_staff = StaffDriver.objects.get(user=user)
+        current_staff, post = StaffDriver.objects.get(user=user), 'driver'
     else:
-        current_staff = None
-    return current_staff
+        current_staff, post = None, None
+    if key:
+        return post
+    else:
+        return current_staff
 
 def get_current_staff(user):  # return staff of current user
     if is_admin(user):
