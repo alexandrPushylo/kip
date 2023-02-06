@@ -219,10 +219,8 @@ def edit_staff_view(request, id_staff):
 
     current_user = User.objects.get(id=id_staff)
     out['current_user'] = current_user
-
     post_list = dict_Staff
     out['post_list'] = post_list
-
     foreman_list = StaffForeman.objects.values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
     current_post = get_current_post(current_user, key=True)
