@@ -44,7 +44,7 @@ from manager.views import del_staff
 
 from manager.views import tabel_driver_view
 from manager.views import tabel_workday_view
-from manager.views import tabel_technic_view
+# from manager.views import tabel_technic_view
 
 from manager.views import Technic_Driver_view
 
@@ -67,7 +67,7 @@ urlpatterns = [
 
     path('tabel_driver/<str:ch_day>', tabel_driver_view, name='tabel_driver'),
     path('tabel_workday/<str:ch_week>', tabel_workday_view, name='tabel_workday'),
-    path('tabel_technic/<str:ch_day>', tabel_technic_view, name='tabel_technic'),################
+    # path('tabel_technic/<str:ch_day>', tabel_technic_view, name='tabel_technic'),################
     path('technic_driver/<str:ch_day>', Technic_Driver_view, name='technic_driver'),
 
     path('admin/', admin.site.urls),
