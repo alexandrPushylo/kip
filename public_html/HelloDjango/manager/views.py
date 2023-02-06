@@ -40,6 +40,7 @@ from manager.utilities import choice as rand_choice
 
 # ------FUNCTION VIEW----------------------
 
+
 def conflict_correction_view(request, ch_day, id_applications):
     out = {}
     id_application_list = id_applications.split(',')[:-1]
@@ -49,14 +50,9 @@ def conflict_correction_view(request, ch_day, id_applications):
     current_day = get_current_day(ch_day)
     out["date_of_target"] = current_day
     out['tech_app_list'] = tech_app_list
-
-
-
     out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day, 1)
     out['work_TD_list'] = get_work_TD_list(current_day, 0)
-
     out["uniq_name_of_vehicles"] = TechnicName.objects.all().order_by('name')
-
     vehicle_and_driver = TechnicDriver.objects.filter(date=current_day, driver__isnull=False).values_list(
         'technic__name__name',
         'driver__driver__user__last_name',
@@ -77,13 +73,10 @@ def conflict_correction_view(request, ch_day, id_applications):
                 app.description = request.POST.get(f"description_{app_id}")
 
                 app.save()
-                # print(f'{app_id}-YES')
             else:
                 app.delete()
-                # print(f'{app_id}-NO')
 
         return HttpResponseRedirect(f'/conflict_resolution/{ch_day}')
-
     return render(request, 'conflict_correction.html', out)
 
 
@@ -107,10 +100,8 @@ def conflict_resolution_view(request, ch_day):
             'app_for_day__construction_site__foreman__user__last_name',
             'app_for_day__construction_site__address',
             'technic_driver_id'
-
         )
         today_technic_applications_list.append((v, today_technic_applications))
-
     out['today_technic_applications'] = today_technic_applications_list
 
     return render(request, 'conflict_resolution.html', out)
@@ -151,7 +142,6 @@ def edit_construction_sites_view(request, id_construction_sites):
     else:
         return HttpResponseRedirect('/')
 
-
     out["staff_list"] = staff_list
     out["construction_sites"] = construction_sites
 
@@ -160,16 +150,14 @@ def edit_construction_sites_view(request, id_construction_sites):
         construction_sites.foreman = StaffForeman.objects.get(id=request.POST['foreman'])
         construction_sites.save()
         return HttpResponseRedirect('/construction_sites/')
-
     return render(request, 'edit_construction_site.html', out)
 
 
 def delete_construction_sites_view(request, id_construction_sites):
-
     construction_sites = ConstructionSite.objects.get(id=id_construction_sites)
     construction_sites.delete()
-
     return HttpResponseRedirect('/construction_sites/')
+
 
 def change_status_construction_site(request, id_construction_sites):
     constr_site = ConstructionSite.objects.get(id=id_construction_sites)
@@ -180,6 +168,7 @@ def change_status_construction_site(request, id_construction_sites):
     constr_site.save()
     return HttpResponseRedirect('/construction_sites/')
 
+
 def add_construction_sites_view(request):
     out = {}
     get_prepare_data(out, request)
@@ -188,10 +177,10 @@ def add_construction_sites_view(request):
         staff_list = StaffForeman.objects.filter().values_list('id', 'user__username', 'user__first_name')
     elif is_foreman(request.user):
 
-        staff_list = StaffForeman.objects.filter(user=request.user).values_list('id','user__username','user__first_name')
+        staff_list = StaffForeman.objects.filter(user=request.user).values_list('id', 'user__username', 'user__first_name')
     elif is_master(request.user):
         foreman = StaffMaster.objects.get(user=request.user).foreman.user
-        staff_list = StaffForeman.objects.filter(user=foreman).values_list('id','user__username','user__first_name')
+        staff_list = StaffForeman.objects.filter(user=foreman).values_list('id', 'user__username', 'user__first_name')
     else:
         return HttpResponseRedirect('/')
 
@@ -204,83 +193,90 @@ def add_construction_sites_view(request):
         construction_sites.save()
         return HttpResponseRedirect('/construction_sites/')
     return render(request, 'edit_construction_site.html', out)
+
 #-------------------------------------------------CONSTRURTION SITE-----------------------------------------------------
 
 # STAFF----------------------------------------------------------------------------------------STAFF--------------------
 
-def show_staff_view(request):# TODO:FIX
+
+def show_staff_view(request):
     out = {}
     get_prepare_data(out, request)
-
-
     staff_list = User.objects.all().order_by('last_name')
     _user_post = []
     for _user in staff_list:
         _post = get_current_staff(_user)
         _tel = get_current_post(_user)
         _user_post.append((_user,_post ,_tel))
-
     out['user_post'] = _user_post
-
     out['staff_list'] = staff_list
-
     return render(request,'show_staff.html', out)
 
-def edit_staff_view(request, id_staff):# TODO:FIX
+
+def edit_staff_view(request, id_staff):
     out = {}
     get_prepare_data(out, request)
 
     current_user = User.objects.get(id=id_staff)
     out['current_user'] = current_user
-
-
-
-
     post_list = dict_Staff
     out['post_list'] = post_list
-
     foreman_list = StaffForeman.objects.values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
-
-    out['current_post'] = get_current_post(current_user)
-
-
+    current_post = get_current_post(current_user, key=True)
+    out['current_post'] = current_post
+    if is_master(current_user):
+        out['current_foreman'] = StaffMaster.objects.get(user=current_user).foreman.user.id
 
     if request.method == 'POST':
-        out['POST'] = request.POST
-        current_staff = Staff.objects.get(id=id_staff)
-        selected_user = User.objects.get(id = current_staff.user.id)
+        selected_user = User.objects.get(id=id_staff)
+        if request.POST.get('post') != current_post:
+            get_current_post(selected_user).delete()
 
-        foreman = request.POST['foreman']
-        if foreman == 'self':
-            id_foreman = current_staff.user.id
-        elif foreman:
-            id_foreman = foreman
-        else:
-            id_foreman = None
-
-        if request.POST['new_password']:
-            selected_user.set_password(request.POST['new_password'])
-        else:
-            selected_user.password = request.POST['old_password']
+        if request.POST['post'] == 'master':
+            foreman = StaffForeman.objects.get(user=request.POST['foreman'])
+            staff, _ = StaffMaster.objects.get_or_create(user=selected_user)
+            staff.foreman = foreman
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'admin':
+            staff, _ = StaffAdmin.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'foreman':
+            staff, _ = StaffForeman.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'driver':
+            staff, _ = StaffDriver.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'mechanic':
+            staff, _ = StaffMechanic.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'employee_supply':
+            staff, _ = StaffSupply.objects.get_or_create(user=selected_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
 
         selected_user.username = request.POST['username']
-
         selected_user.first_name = request.POST['first_name']
         selected_user.last_name = request.POST['last_name']
-        current_staff.telephone = request.POST['telephone']
-        current_staff.post = Post.objects.get(post=request.POST['post'])
-        current_staff.id_foreman = id_foreman
+        print(request.POST['new_password'])
+        if request.POST['new_password'] == 'true':
+            selected_user.set_password(request.POST['password'])
+        else:
+            selected_user.password = request.POST['password']
         selected_user.save()
-        current_staff.save()
 
         return HttpResponseRedirect('/show_staff/')
-
     return render(request, 'edit_staff.html', out)
 
 #-----------------------------------------------------STAFF-------------------------------------------------------------
 
 # TABEL----------------------------------------------------------------------------------------TABEL--------------------
+
 
 def tabel_driver_view(request, ch_day):
     out = {}
@@ -318,6 +314,7 @@ def tabel_driver_view(request, ch_day):
         return HttpResponseRedirect(f'/tabel_driver/{ch_day}')
     return render(request,'tabel_driver.html', out)
 
+
 def tabel_workday_view(request, ch_week):
     out = {}
     if ch_week == 'nextweek':
@@ -328,21 +325,16 @@ def tabel_workday_view(request, ch_week):
         _day = TODAY
         out['week_title'] = 'Текущая неделя'
 
-    get_prepare_data(out,request)
+    get_prepare_data(out, request)
     last_week = list(get_week(_day, 'l'))
     current_week = list(get_week(_day))
 
-    if WorkDayTabel.objects.filter(date=current_week[0]).count()==0:#TODO:fix copy tommoryw
-        if WorkDayTabel.objects.filter(date=last_week[0]).count()==0:
-            for n, day in enumerate(current_week, 1):
-                if n in (6, 7):
-                    WorkDayTabel.objects.create(date=day, status=False)
-                else:
-                    WorkDayTabel.objects.create(date=day)
-        else:
-            for n in range(7):
-                d = WorkDayTabel.objects.get(date=last_week[n])
-                WorkDayTabel.objects.create(date = d.date + timedelta(7) )
+    if WorkDayTabel.objects.filter(date=current_week[0]).count()==0:
+        for n, day in enumerate(current_week, 1):
+            if n in (6, 7):
+                WorkDayTabel.objects.create(date=day, status=False)
+            else:
+                WorkDayTabel.objects.create(date=day)
 
     out['week'] = []
     for _day in range(7):
@@ -364,7 +356,8 @@ def tabel_workday_view(request, ch_week):
         return HttpResponseRedirect(f'/tabel_workday/{ch_week}')
     return render(request, 'tabel_workday.html', out)
 
-def tabel_technic_view(request, ch_day):
+
+def tabel_technic_view(request, ch_day):#TODO: dell
     out = {}
     current_day = get_current_day(ch_day)
     get_prepare_data(out, request, current_day, selected_day=ch_day)
@@ -399,6 +392,7 @@ def tabel_technic_view(request, ch_day):
 
         return HttpResponseRedirect(f'/tabel_technic/{ch_day}')
     return render(request, 'tabel_technic.html', out)
+
 
 def Technic_Driver_view(request, ch_day):
     out = {}
@@ -477,6 +471,7 @@ def Technic_Driver_view(request, ch_day):
 
 #-----------------------------------------------------TABEL-------------------------------------------------------------
 
+
 def clear_application_view(request, id_application):
     current_application = ApplicationToday.objects.get(id=id_application)
     ApplicationTechnic.objects.filter(app_for_day=current_application).delete()
@@ -534,6 +529,7 @@ def show_applications_view(request, ch_day):
             appToday.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
     return render(request, "main.html", out)
 
+
 def show_application_for_driver(request, ch_day):
     current_day = get_current_day(ch_day)
     out = {}
@@ -551,6 +547,7 @@ def show_application_for_driver(request, ch_day):
     out['applications'] = applications
 
     return render(request, 'applications_for_driver.html', out)
+
 
 def show_today_applications(request, ch_day):
     current_day = get_current_day(ch_day)
@@ -714,6 +711,7 @@ def create_new_application(request, id_application):
         return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
     return render(request, "create_application.html", out)
 
+
 def signin_view(request):
     out = {
         'TODAY': TODAY,
@@ -732,24 +730,27 @@ def signin_view(request):
     return render(request, 'signin.html', out)
 
 
-def signup_view(request):#TODO:fix
+def del_staff(request, id_staff):
+    user = User.objects.get(id=id_staff)
+    get_current_post(user).delete()
+    user.delete()
+    return HttpResponseRedirect('/show_staff/')
+
+
+def signup_view(request):
     out = {
         'TODAY': TODAY,
         'WEEKDAY_TODAY': WEEKDAY[TODAY.weekday()],
     }
-    get_prepare_data(out, request)
-
-    foreman_list = StaffForeman.objects.filter().values_list('user_id', 'user__last_name','user__first_name')
-
+    foreman_list = StaffForeman.objects.filter().values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
-
-    # if is_admin(request.user):
-    #     post_list = Post.objects.all()
-    # elif is_foreman(request.user) or is_master(request.user):
-    #     post_list = Post.objects.filter(~Q(post=dict_Staff['admin']))
-    # else:
-    #     post_list = Post.objects.filter(post=dict_Staff['driver'])
-    # out['post_list'] = post_list
+    if request.user.is_anonymous:
+        post_list = {'driver': 'Водитель'}
+    else:
+        post_list = dict_Staff
+    out['post_list'] = post_list
+    if not request.user.is_anonymous:
+        get_prepare_data(out, request)
 
     if request.method == 'POST':
         username = request.POST['username']
@@ -763,25 +764,39 @@ def signup_view(request):#TODO:fix
         new_user = User.objects.create_user(username=username, password=password,
                                             first_name=first_name, last_name=last_name,
                                             is_staff=False, is_superuser=False)
-        if foreman == 'self':
-            id_foreman = new_user.id
-        elif foreman:
-            id_foreman = foreman
-        else:
-            id_foreman = None
 
-        new_staff = Staff.objects.create(
-            user=new_user,
-            post=Post.objects.get(post=post),
-            id_foreman=id_foreman,
-            telephone=telephone
-        )
-        new_staff.save()
+        if request.POST['post'] == 'master':
+            foreman = StaffForeman.objects.get(user=request.POST['foreman'])
+            staff = StaffMaster.objects.create(user=new_user)
+            staff.foreman = foreman
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'admin':
+            staff = StaffAdmin.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'foreman':
+            staff = StaffForeman.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'driver':
+            staff = StaffDriver.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'mechanic':
+            staff = StaffMechanic.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'employee_supply':
+            staff = StaffSupply.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
         new_user.save()
 
         if request.user.is_anonymous:
             login(request, new_user)
-        return HttpResponseRedirect('/')
+
+        return HttpResponseRedirect('/show_staff/')
     return render(request, 'signup.html', out)
 
 
@@ -801,6 +816,7 @@ def approv_all_applications(request, ch_day):
             app.save()
     return HttpResponseRedirect(f'/applications/{ch_day}')
 
+
 def submitted_all_applications(request, ch_day):
     if is_foreman(request.user) or is_master(request.user):
         current_day = get_current_day(ch_day)
@@ -810,6 +826,7 @@ def submitted_all_applications(request, ch_day):
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
             app.save()
     return HttpResponseRedirect(f'/applications/{ch_day}')
+
 
 def get_work_TD_list(current_day, c_in=1, F_saved=False):
     out = []
@@ -835,6 +852,7 @@ def get_work_TD_list(current_day, c_in=1, F_saved=False):
             out.append(_i)
     return out
 
+
 def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationtech
     out = {}
     l = []
@@ -858,20 +876,29 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
             l.append(i)
     return l
 
-def get_current_post(user):
-    if is_admin(user):
-        current_staff = StaffAdmin.objects.get(user=user)
-    elif is_foreman(user):
-        current_staff = StaffForeman.objects.get(user=user)
-    elif is_master(user):
-        current_staff = StaffMaster.objects.get(user=user)
-    elif is_driver(user):
-        current_staff = StaffDriver.objects.get(user=user)
-    else:
-        current_staff = None
-    return current_staff
 
-def get_current_staff(user):  # return staff of current user
+def get_current_post(user, key=False):
+    if is_admin(user):
+        current_staff, post = StaffAdmin.objects.get(user=user), 'admin'
+    elif is_foreman(user):
+        current_staff, post = StaffForeman.objects.get(user=user), 'foreman'
+    elif is_master(user):
+        current_staff, post = StaffMaster.objects.get(user=user), 'master'
+    elif is_driver(user):
+        current_staff, post = StaffDriver.objects.get(user=user), 'driver'
+    elif is_mechanic(user):
+        current_staff, post = StaffMechanic.objects.get(user=user), 'mechanic'
+    elif is_employee_supply(user):
+        current_staff, post = StaffSupply.objects.get(user=user), 'employee_supply'
+    else:
+        current_staff, post = None, None
+    if key:
+        return post
+    else:
+        return current_staff
+
+
+def get_current_staff(user):
     if is_admin(user):
         staff = dict_Staff['admin']
     elif is_foreman(user):
@@ -880,6 +907,10 @@ def get_current_staff(user):  # return staff of current user
         staff = dict_Staff['master']
     elif is_driver(user):
         staff = dict_Staff['driver']
+    elif is_mechanic(user):
+        staff = dict_Staff['mechanic']
+    elif is_employee_supply(user):
+        staff = dict_Staff['employee_supply']
     else:
         staff = 'AnonymousUser'
     return staff
@@ -909,6 +940,18 @@ def is_driver(user):
     return False
 
 
+def is_mechanic(user):
+    if StaffMechanic.objects.filter(user=user):
+        return True
+    return False
+
+
+def is_employee_supply(user):
+    if StaffSupply.objects.filter(user=user):
+        return True
+    return False
+
+
 def show_start_page(request):
     if request.user.is_anonymous:
         return HttpResponseRedirect("signin/")
@@ -921,6 +964,12 @@ def show_start_page(request):
             return HttpResponseRedirect("applications/next_day")
         elif is_driver(request.user):
             return HttpResponseRedirect("personal_application/today")
+        elif is_mechanic(request.user):
+            return HttpResponseRedirect("/today_app/today")
+        elif is_employee_supply(request.user):
+            return HttpResponseRedirect("/today_app/today")
+        else:
+            return HttpResponseRedirect("/today_app/today")
 
 
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
@@ -946,7 +995,7 @@ def success_application(request, id_application):
 
 def get_current_day(selected_day: str):
     if selected_day == 'next_day':
-        for n in range(1,14):
+        for n in range(1, 14):
             _day = WorkDayTabel.objects.get(date=TODAY+timedelta(n))
             if _day.status:
                 return _day.date
@@ -955,6 +1004,7 @@ def get_current_day(selected_day: str):
             _day = WorkDayTabel.objects.get(date=TODAY - timedelta(n))
             if _day.status:
                 return _day.date
+
 
 def get_CH_day(day):
     if str(day) == str(TODAY):
