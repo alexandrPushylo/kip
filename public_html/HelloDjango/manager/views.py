@@ -435,6 +435,20 @@ def Technic_Driver_view(request, ch_day):
         else:
             for tech in Technic.objects.all():
                 TechnicDriver.objects.create(technic=tech,date=TODAY,status=True)
+    else:
+        technic_driver_list = TechnicDriver.objects.filter(date=current_day)
+
+        for _td in technic_driver_list:
+            if not _td.driver:
+                _attach_drv = _td.technic.attached_driver
+                if not _attach_drv: continue
+                _attach_drv_staff = DriverTabel.objects.get(driver=_attach_drv, date=current_day)
+                if _attach_drv_staff.status:
+                    _td.driver = _attach_drv_staff
+                    _td.save()
+                else:
+                    _td.driver = None
+                    _td.save()
 
     technic_driver_list = TechnicDriver.objects.filter(date=current_day)
     out['technic_driver_list'] = technic_driver_list.order_by('technic__name__name')
