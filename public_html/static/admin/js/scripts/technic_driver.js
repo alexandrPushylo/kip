@@ -4,25 +4,13 @@ for (let i=1;i<=count_row;i++) {
     const io_drv = '#io_drv_'+i;
     const select_drv = '#select_drv_'+i;
     const io_drv_val = $(io_drv).val();
-    // if (io_drv_val === ''){
-    //     $(select_drv +" > option:checked").val('').text('Водитель не назначен');
-    // }
-    // else {
         $(select_drv+' > option[value="'+io_drv_val+'"]').prop('selected', true);
-    // }
 
-    $('#row_'+i).click(function () {
+    $('.row_'+i).click(function () {
         if ($('#inp_'+i).is(':checked')){
 	        $('#inp_'+i).prop('checked', false);
         } else {
 	        $('#inp_'+i).prop('checked', true);
         }
-
-
     })
-
-
-
-
-
 }
