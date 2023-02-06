@@ -1,4 +1,4 @@
-<nav class="navbar" style="background-color: rgba(52,58,64,0.89); position:sticky; top:0;z-index:100;">
+<nav class="navbar fixed-top" style="background-color: rgba(52,58,64,0.89); z-index:100;">
   <div class="container-fluid">
 {#    <a class="navbar-brand" style="color: azure" href="/">IWHub </a>#}
     <a class="navbar-brand" style="color: azure" >{{ WEEKDAY_TODAY }}<br> {{ TODAY }} </a>
@@ -10,7 +10,7 @@
         {% else %}
             <div class="btn-group">
                 <a href="{% url 'sign_in' %}" class="btn btn-primary active" aria-current="page">Вход</a>
-{#                <a href="{% url 'sign_up' %}" class="btn btn-primary">Регистрация</a>#}
+                <a href="{% url 'sign_up' %}" class="btn btn-primary">Регистрация</a>
             </div>
         {% endif %}
   </div>

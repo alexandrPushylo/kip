@@ -32,11 +32,11 @@
     <tr  class="tech_drv_row" >
     <th scope="row">{{ forloop.counter }}</th>
 
-    <td id="row_{{ forloop.counter }}"><input {% if tech_drv.status  %} checked {% endif %}
+    <td class="row_{{ forloop.counter }}"><input {% if tech_drv.status  %} checked {% endif %}
               id="inp_{{ forloop.counter }}" type="checkbox" name="tech_status_{{ forloop.counter }}"/></td>
 
-    <td>{{ tech_drv.technic.name }} </td>
-    <td>[{{ tech_drv.technic.id_information }}]</td>
+    <td class="row_{{ forloop.counter }}">{{ tech_drv.technic.name }} </td>
+    <td class="row_{{ forloop.counter }}">[{{ tech_drv.technic.id_information }}]</td>
 
     <td><input type="hidden" id="io_drv_{{forloop.counter}}" value="{{ tech_drv.driver.id }}"/>
             <select id="select_drv_{{forloop.counter}}" name="select_drv">
