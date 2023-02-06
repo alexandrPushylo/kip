@@ -961,6 +961,12 @@ def show_start_page(request):
             return HttpResponseRedirect("applications/next_day")
         elif is_driver(request.user):
             return HttpResponseRedirect("personal_application/today")
+        elif is_mechanic(request.user):
+            return HttpResponseRedirect("/today_app/today")
+        elif is_employee_supply(request.user):
+            return HttpResponseRedirect("/today_app/today")
+        else:
+            return HttpResponseRedirect("/today_app/today")
 
 
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
