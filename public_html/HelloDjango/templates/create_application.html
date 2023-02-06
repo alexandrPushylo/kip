@@ -72,7 +72,7 @@
                 <option selected>---</option>
                 {% for v in D %}
                     {% if v.1 in work_tech_name_list %}
-                    <option {% if v.1 in conflicts_vehicles_list %} style="color: blue" {% endif %}  value="{{ v.0 }}">{{ v.1 }}{% if v.1 in conflicts_vehicles_list %} Заброн. {% endif %}</option>
+                    <option {% if v.1 in conflicts_vehicles_list %} style="color: blue" {% endif %}  value="{{ v.0 }}">{{ v.1 }}</option>
                     {% endif %}
                 {% endfor %}
             </select>
