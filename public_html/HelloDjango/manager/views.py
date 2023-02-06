@@ -266,14 +266,13 @@ def edit_staff_view(request, id_staff):
         selected_user.first_name = request.POST['first_name']
         selected_user.last_name = request.POST['last_name']
 
-        if request.POST['new_password']:    #TODO: change pass
+        if request.POST['new_password']:
             selected_user.set_password(request.POST['new_password'])
         else:
             selected_user.password = request.POST['old_password']
         selected_user.save()
 
         return HttpResponseRedirect('/show_staff/')
-
     return render(request, 'edit_staff.html', out)
 
 #-----------------------------------------------------STAFF-------------------------------------------------------------
