@@ -861,7 +861,7 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
             out[_a.name.name] = Technic.objects.filter(name=_a.name).count()
     else:
         for f in Technic.objects.all():
-            out[f.name.name] = TechnicDriver.objects.filter(status=True,date=current_day,
+            out[f.name.name] = TechnicDriver.objects.filter(status=True, date=current_day,
                                                             technic__name__name=f.name.name).count()
 
     app_tech = ApplicationTechnic.objects.filter(Q(app_for_day__date=current_day),
