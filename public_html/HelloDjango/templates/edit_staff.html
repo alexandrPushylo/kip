@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block content %}     {{ POST }}
+{% block content %}
 
 <div class="container-lg m-3 mx-auto w-75 p-3"  >
     <div class="card shadow-lg" style="background-color: rgba(247,247,248,0.71)">
@@ -8,7 +8,7 @@
 {#        <p class="card-text"> <b class="fs-5">Вес сотрудники </b> </p><hr>#}
       <div>
 
-        <form  method="post">{% csrf_token %}
+        <form id="edit_staff_form"  method="post">{% csrf_token %}
         <div >
             <label>Имя пользователя</label>
             <input type="text" required class="form-control" name="username" value="{{ current_user.username }}">
@@ -52,8 +52,6 @@
             </select>
         </div>
 
-        <br>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
 
 
@@ -72,6 +70,10 @@
 {% endblock %}
 
 {% block bottom_panel %}
-    <a href="{% url 'show_staff' %}" class="btn btn-outline-secondary active col-auto m-1" aria-current="page">Все сотрудники</a>
-    <a href="/signup/" class="btn btn-outline-secondary active col-auto m-1" aria-current="page">Добавить сотрудника</a>
+<div class="input-group d-flex justify-content-center align-items-center">
+  <a href="{% url 'show_staff' %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
+  <a href="{% url 'del_staff' current_user.id %}" class="btn btn-outline-danger  col-auto m-1" aria-current="page">Удалить</a>
+  <button form="edit_staff_form" type="submit" class="btn btn-success m-1">Сохранить</button>
+
+</div>
 {% endblock %}
