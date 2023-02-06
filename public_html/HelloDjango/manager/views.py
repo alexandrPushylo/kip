@@ -733,24 +733,17 @@ def signin_view(request):
     return render(request, 'signin.html', out)
 
 
-def signup_view(request):#TODO:fix
+def signup_view(request):
     out = {
         'TODAY': TODAY,
         'WEEKDAY_TODAY': WEEKDAY[TODAY.weekday()],
     }
-    get_prepare_data(out, request)
-
-    foreman_list = StaffForeman.objects.filter().values_list('user_id', 'user__last_name','user__first_name')
-
+    foreman_list = StaffForeman.objects.filter().values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
-
-    # if is_admin(request.user):
-    #     post_list = Post.objects.all()
-    # elif is_foreman(request.user) or is_master(request.user):
-    #     post_list = Post.objects.filter(~Q(post=dict_Staff['admin']))
-    # else:
-    #     post_list = Post.objects.filter(post=dict_Staff['driver'])
-    # out['post_list'] = post_list
+    post_list = dict_Staff
+    out['post_list'] = post_list
+    if not request.user.is_anonymous:
+        get_prepare_data(out, request)
 
     if request.method == 'POST':
         username = request.POST['username']
@@ -764,25 +757,39 @@ def signup_view(request):#TODO:fix
         new_user = User.objects.create_user(username=username, password=password,
                                             first_name=first_name, last_name=last_name,
                                             is_staff=False, is_superuser=False)
-        if foreman == 'self':
-            id_foreman = new_user.id
-        elif foreman:
-            id_foreman = foreman
-        else:
-            id_foreman = None
 
-        new_staff = Staff.objects.create(
-            user=new_user,
-            post=Post.objects.get(post=post),
-            id_foreman=id_foreman,
-            telephone=telephone
-        )
-        new_staff.save()
+        if request.POST['post'] == 'master':
+            foreman = StaffForeman.objects.get(user=request.POST['foreman'])
+            staff = StaffMaster.objects.create(user=new_user)
+            staff.foreman = foreman
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'admin':
+            staff = StaffAdmin.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'foreman':
+            staff = StaffForeman.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'driver':
+            staff = StaffDriver.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'mechanic':
+            staff = StaffMechanic.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
+        elif request.POST['post'] == 'employee_supply':
+            staff = StaffSupply.objects.create(user=new_user)
+            staff.telephone = request.POST.get('telephone')
+            staff.save()
         new_user.save()
 
         if request.user.is_anonymous:
             login(request, new_user)
-        return HttpResponseRedirect('/')
+
+        return HttpResponseRedirect('/show_staff/')
     return render(request, 'signup.html', out)
 
 
