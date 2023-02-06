@@ -40,6 +40,7 @@ from manager.utilities import choice as rand_choice
 
 # ------FUNCTION VIEW----------------------
 
+
 def conflict_correction_view(request, ch_day, id_applications):
     out = {}
     id_application_list = id_applications.split(',')[:-1]
@@ -49,14 +50,9 @@ def conflict_correction_view(request, ch_day, id_applications):
     current_day = get_current_day(ch_day)
     out["date_of_target"] = current_day
     out['tech_app_list'] = tech_app_list
-
-
-
     out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day, 1)
     out['work_TD_list'] = get_work_TD_list(current_day, 0)
-
     out["uniq_name_of_vehicles"] = TechnicName.objects.all().order_by('name')
-
     vehicle_and_driver = TechnicDriver.objects.filter(date=current_day, driver__isnull=False).values_list(
         'technic__name__name',
         'driver__driver__user__last_name',
@@ -77,13 +73,10 @@ def conflict_correction_view(request, ch_day, id_applications):
                 app.description = request.POST.get(f"description_{app_id}")
 
                 app.save()
-                # print(f'{app_id}-YES')
             else:
                 app.delete()
-                # print(f'{app_id}-NO')
 
         return HttpResponseRedirect(f'/conflict_resolution/{ch_day}')
-
     return render(request, 'conflict_correction.html', out)
 
 
@@ -107,10 +100,8 @@ def conflict_resolution_view(request, ch_day):
             'app_for_day__construction_site__foreman__user__last_name',
             'app_for_day__construction_site__address',
             'technic_driver_id'
-
         )
         today_technic_applications_list.append((v, today_technic_applications))
-
     out['today_technic_applications'] = today_technic_applications_list
 
     return render(request, 'conflict_resolution.html', out)
@@ -151,7 +142,6 @@ def edit_construction_sites_view(request, id_construction_sites):
     else:
         return HttpResponseRedirect('/')
 
-
     out["staff_list"] = staff_list
     out["construction_sites"] = construction_sites
 
@@ -160,16 +150,14 @@ def edit_construction_sites_view(request, id_construction_sites):
         construction_sites.foreman = StaffForeman.objects.get(id=request.POST['foreman'])
         construction_sites.save()
         return HttpResponseRedirect('/construction_sites/')
-
     return render(request, 'edit_construction_site.html', out)
 
 
 def delete_construction_sites_view(request, id_construction_sites):
-
     construction_sites = ConstructionSite.objects.get(id=id_construction_sites)
     construction_sites.delete()
-
     return HttpResponseRedirect('/construction_sites/')
+
 
 def change_status_construction_site(request, id_construction_sites):
     constr_site = ConstructionSite.objects.get(id=id_construction_sites)
@@ -180,6 +168,7 @@ def change_status_construction_site(request, id_construction_sites):
     constr_site.save()
     return HttpResponseRedirect('/construction_sites/')
 
+
 def add_construction_sites_view(request):
     out = {}
     get_prepare_data(out, request)
@@ -188,10 +177,10 @@ def add_construction_sites_view(request):
         staff_list = StaffForeman.objects.filter().values_list('id', 'user__username', 'user__first_name')
     elif is_foreman(request.user):
 
-        staff_list = StaffForeman.objects.filter(user=request.user).values_list('id','user__username','user__first_name')
+        staff_list = StaffForeman.objects.filter(user=request.user).values_list('id', 'user__username', 'user__first_name')
     elif is_master(request.user):
         foreman = StaffMaster.objects.get(user=request.user).foreman.user
-        staff_list = StaffForeman.objects.filter(user=foreman).values_list('id','user__username','user__first_name')
+        staff_list = StaffForeman.objects.filter(user=foreman).values_list('id', 'user__username', 'user__first_name')
     else:
         return HttpResponseRedirect('/')
 
@@ -204,29 +193,27 @@ def add_construction_sites_view(request):
         construction_sites.save()
         return HttpResponseRedirect('/construction_sites/')
     return render(request, 'edit_construction_site.html', out)
+
 #-------------------------------------------------CONSTRURTION SITE-----------------------------------------------------
 
 # STAFF----------------------------------------------------------------------------------------STAFF--------------------
 
-def show_staff_view(request):# TODO:FIX
+
+def show_staff_view(request):
     out = {}
     get_prepare_data(out, request)
-
-
     staff_list = User.objects.all().order_by('last_name')
     _user_post = []
     for _user in staff_list:
         _post = get_current_staff(_user)
         _tel = get_current_post(_user)
         _user_post.append((_user,_post ,_tel))
-
     out['user_post'] = _user_post
-
     out['staff_list'] = staff_list
-
     return render(request,'show_staff.html', out)
 
-def edit_staff_view(request, id_staff):# TODO:FIX
+
+def edit_staff_view(request, id_staff):
     out = {}
     get_prepare_data(out, request)
 
@@ -243,14 +230,10 @@ def edit_staff_view(request, id_staff):# TODO:FIX
     if is_master(current_user):
         out['current_foreman'] = StaffMaster.objects.get(user=current_user).foreman.user.id
 
-
-
     if request.method == 'POST':
-        print(request.POST)
         selected_user = User.objects.get(id=id_staff)
         if request.POST.get('post') != current_post:
             get_current_post(selected_user).delete()
-
 
         if request.POST['post'] == 'master':
             foreman = StaffForeman.objects.get(user=request.POST['foreman'])
@@ -283,7 +266,7 @@ def edit_staff_view(request, id_staff):# TODO:FIX
         selected_user.first_name = request.POST['first_name']
         selected_user.last_name = request.POST['last_name']
 
-        if request.POST['new_password']:
+        if request.POST['new_password']:    #TODO: change pass
             selected_user.set_password(request.POST['new_password'])
         else:
             selected_user.password = request.POST['old_password']
@@ -296,6 +279,7 @@ def edit_staff_view(request, id_staff):# TODO:FIX
 #-----------------------------------------------------STAFF-------------------------------------------------------------
 
 # TABEL----------------------------------------------------------------------------------------TABEL--------------------
+
 
 def tabel_driver_view(request, ch_day):
     out = {}
@@ -332,6 +316,7 @@ def tabel_driver_view(request, ch_day):
                 st.save()
         return HttpResponseRedirect(f'/tabel_driver/{ch_day}')
     return render(request,'tabel_driver.html', out)
+
 
 def tabel_workday_view(request, ch_week):
     out = {}
@@ -374,6 +359,7 @@ def tabel_workday_view(request, ch_week):
         return HttpResponseRedirect(f'/tabel_workday/{ch_week}')
     return render(request, 'tabel_workday.html', out)
 
+
 def tabel_technic_view(request, ch_day):#TODO: dell
     out = {}
     current_day = get_current_day(ch_day)
@@ -409,6 +395,7 @@ def tabel_technic_view(request, ch_day):#TODO: dell
 
         return HttpResponseRedirect(f'/tabel_technic/{ch_day}')
     return render(request, 'tabel_technic.html', out)
+
 
 def Technic_Driver_view(request, ch_day):
     out = {}
@@ -487,6 +474,7 @@ def Technic_Driver_view(request, ch_day):
 
 #-----------------------------------------------------TABEL-------------------------------------------------------------
 
+
 def clear_application_view(request, id_application):
     current_application = ApplicationToday.objects.get(id=id_application)
     ApplicationTechnic.objects.filter(app_for_day=current_application).delete()
@@ -544,6 +532,7 @@ def show_applications_view(request, ch_day):
             appToday.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
     return render(request, "main.html", out)
 
+
 def show_application_for_driver(request, ch_day):
     current_day = get_current_day(ch_day)
     out = {}
@@ -561,6 +550,7 @@ def show_application_for_driver(request, ch_day):
     out['applications'] = applications
 
     return render(request, 'applications_for_driver.html', out)
+
 
 def show_today_applications(request, ch_day):
     current_day = get_current_day(ch_day)
@@ -724,6 +714,7 @@ def create_new_application(request, id_application):
         return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
     return render(request, "create_application.html", out)
 
+
 def signin_view(request):
     out = {
         'TODAY': TODAY,
@@ -811,6 +802,7 @@ def approv_all_applications(request, ch_day):
             app.save()
     return HttpResponseRedirect(f'/applications/{ch_day}')
 
+
 def submitted_all_applications(request, ch_day):
     if is_foreman(request.user) or is_master(request.user):
         current_day = get_current_day(ch_day)
@@ -820,6 +812,7 @@ def submitted_all_applications(request, ch_day):
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
             app.save()
     return HttpResponseRedirect(f'/applications/{ch_day}')
+
 
 def get_work_TD_list(current_day, c_in=1, F_saved=False):
     out = []
@@ -845,6 +838,7 @@ def get_work_TD_list(current_day, c_in=1, F_saved=False):
             out.append(_i)
     return out
 
+
 def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationtech
     out = {}
     l = []
@@ -868,6 +862,7 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
             l.append(i)
     return l
 
+
 def get_current_post(user, key=False):
     if is_admin(user):
         current_staff, post = StaffAdmin.objects.get(user=user), 'admin'
@@ -888,7 +883,8 @@ def get_current_post(user, key=False):
     else:
         return current_staff
 
-def get_current_staff(user):  # return staff of current user
+
+def get_current_staff(user):
     if is_admin(user):
         staff = dict_Staff['admin']
     elif is_foreman(user):
@@ -929,10 +925,12 @@ def is_driver(user):
         return True
     return False
 
+
 def is_mechanic(user):
     if StaffMechanic.objects.filter(user=user):
         return True
     return False
+
 
 def is_employee_supply(user):
     if StaffSupply.objects.filter(user=user):
@@ -977,7 +975,7 @@ def success_application(request, id_application):
 
 def get_current_day(selected_day: str):
     if selected_day == 'next_day':
-        for n in range(1,14):
+        for n in range(1, 14):
             _day = WorkDayTabel.objects.get(date=TODAY+timedelta(n))
             if _day.status:
                 return _day.date
@@ -986,6 +984,7 @@ def get_current_day(selected_day: str):
             _day = WorkDayTabel.objects.get(date=TODAY - timedelta(n))
             if _day.status:
                 return _day.date
+
 
 def get_CH_day(day):
     if str(day) == str(TODAY):
