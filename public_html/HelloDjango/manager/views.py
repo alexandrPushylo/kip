@@ -343,21 +343,16 @@ def tabel_workday_view(request, ch_week):
         _day = TODAY
         out['week_title'] = 'Текущая неделя'
 
-    get_prepare_data(out,request)
+    get_prepare_data(out, request)
     last_week = list(get_week(_day, 'l'))
     current_week = list(get_week(_day))
 
-    if WorkDayTabel.objects.filter(date=current_week[0]).count()==0:#TODO:fix copy tommoryw
-        if WorkDayTabel.objects.filter(date=last_week[0]).count()==0:
-            for n, day in enumerate(current_week, 1):
-                if n in (6, 7):
-                    WorkDayTabel.objects.create(date=day, status=False)
-                else:
-                    WorkDayTabel.objects.create(date=day)
-        else:
-            for n in range(7):
-                d = WorkDayTabel.objects.get(date=last_week[n])
-                WorkDayTabel.objects.create(date = d.date + timedelta(7) )
+    if WorkDayTabel.objects.filter(date=current_week[0]).count()==0:
+        for n, day in enumerate(current_week, 1):
+            if n in (6, 7):
+                WorkDayTabel.objects.create(date=day, status=False)
+            else:
+                WorkDayTabel.objects.create(date=day)
 
     out['week'] = []
     for _day in range(7):
@@ -379,7 +374,7 @@ def tabel_workday_view(request, ch_week):
         return HttpResponseRedirect(f'/tabel_workday/{ch_week}')
     return render(request, 'tabel_workday.html', out)
 
-def tabel_technic_view(request, ch_day):
+def tabel_technic_view(request, ch_day):#TODO: dell
     out = {}
     current_day = get_current_day(ch_day)
     get_prepare_data(out, request, current_day, selected_day=ch_day)
