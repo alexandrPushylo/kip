@@ -744,7 +744,10 @@ def signup_view(request):
     }
     foreman_list = StaffForeman.objects.filter().values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
-    post_list = dict_Staff
+    if request.user.is_anonymous:
+        post_list = {'driver': 'Водитель'}
+    else:
+        post_list = dict_Staff
     out['post_list'] = post_list
     if not request.user.is_anonymous:
         get_prepare_data(out, request)
