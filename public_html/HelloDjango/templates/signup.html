@@ -3,7 +3,7 @@
 {% block content %}
 
 <section class="container mt-5" style="width: 300px">
-    <form  method="post">{% csrf_token %}
+    <form id="logout_form"  method="post">{% csrf_token %}
         <div >
             <label>Имя пользователя</label>
             <input type="text" required class="form-control" name="username">
@@ -31,8 +31,8 @@
 {#            <input type="hidden" name="post" id="io_post">#}
             <select class=" col-auto" required id="post_select" name="post">
                         <option selected></option>
-                        {% for post in post_list %}
-                            <option value="{{ post }}">{{ post }}</option>
+                        {% for k, v in post_list.items %}
+                            <option value="{{ k }}">{{ v }}</option>
                         {% endfor %}
             </select>
         </div>
@@ -46,12 +46,12 @@
                         {% endfor %}
             </select>
         </div>
-
+        {% if user.is_anonymous   %}
         <br>
         <button type="submit" class="btn btn-primary">Регистрация</button>
+        {% endif %}
     </form>
 </section>
-    {{ POST }}
 
 {% endblock %}
 
@@ -59,4 +59,18 @@
 
 {% block script %}{% load static %}
             <script src="{% static "admin/js/scripts/signup.js" %}"></script>
+{% endblock %}
+
+
+
+
+
+{% block bottom_panel %}
+{% if not user.is_anonymous   %}
+<div class="input-group d-flex justify-content-center align-items-center">
+  <a href="{% url 'show_staff' %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
+<button form="logout_form" type="submit" class="btn btn-success">Добавить</button>
+
+</div>
+{% endif %}
 {% endblock %}

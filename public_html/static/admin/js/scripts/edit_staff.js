@@ -8,24 +8,25 @@ const io_foreman = $('#io_foreman');
 const select_foreman = $('#foreman_select');
 
 chg_pass_btn.click(function () {
-    new_pass.attr('hidden',false);
-    old_pass.attr('hidden',true);
+    new_pass.val(true);
+    old_pass.attr('readonly',false);
+    old_pass.val('');
     return false;
 });
 
 $('#post_select> option[value="'+ io_post.val() +'"]').prop('selected', true);
 
 const hidden_div = $('.cl_foreman').attr('hidden',true);
-if (io_post.val() === 'Мастер'){
+if (io_post.val() === 'master'){
         hidden_div.attr('hidden',false);
     }else {hidden_div.attr('hidden',true);}
 
 select_post.change(function (){
-    if (this.value === 'Мастер'){
+    if (this.value === 'master'){
         hidden_div.attr('hidden',false);
     }else {hidden_div.attr('hidden',true);}
 
-    if(this.value === 'Прораб'){
+    if(this.value === 'foreman'){
         io_foreman.val('self');
     }
 })
