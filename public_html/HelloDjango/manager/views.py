@@ -882,6 +882,10 @@ def get_current_post(user, key=False):
         current_staff, post = StaffMaster.objects.get(user=user), 'master'
     elif is_driver(user):
         current_staff, post = StaffDriver.objects.get(user=user), 'driver'
+    elif is_mechanic(user):
+        current_staff, post = StaffMechanic.objects.get(user=user), 'mechanic'
+    elif is_employee_supply(user):
+        current_staff, post = StaffSupply.objects.get(user=user), 'employee_supply'
     else:
         current_staff, post = None, None
     if key:
@@ -898,6 +902,10 @@ def get_current_staff(user):  # return staff of current user
         staff = dict_Staff['master']
     elif is_driver(user):
         staff = dict_Staff['driver']
+    elif is_mechanic(user):
+        staff = dict_Staff['mechanic']
+    elif is_employee_supply(user):
+        staff = dict_Staff['employee_supply']
     else:
         staff = 'AnonymousUser'
     return staff
@@ -923,6 +931,16 @@ def is_master(user):
 
 def is_driver(user):
     if StaffDriver.objects.filter(user=user):
+        return True
+    return False
+
+def is_mechanic(user):
+    if StaffMechanic.objects.filter(user=user):
+        return True
+    return False
+
+def is_employee_supply(user):
+    if StaffSupply.objects.filter(user=user):
         return True
     return False
 
