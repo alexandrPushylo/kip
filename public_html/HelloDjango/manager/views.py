@@ -265,11 +265,11 @@ def edit_staff_view(request, id_staff):
         selected_user.username = request.POST['username']
         selected_user.first_name = request.POST['first_name']
         selected_user.last_name = request.POST['last_name']
-
-        if request.POST['new_password']:
-            selected_user.set_password(request.POST['new_password'])
+        print(request.POST['new_password'])
+        if request.POST['new_password'] == 'true':
+            selected_user.set_password(request.POST['password'])
         else:
-            selected_user.password = request.POST['old_password']
+            selected_user.password = request.POST['password']
         selected_user.save()
 
         return HttpResponseRedirect('/show_staff/')

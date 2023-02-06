@@ -8,8 +8,9 @@ const io_foreman = $('#io_foreman');
 const select_foreman = $('#foreman_select');
 
 chg_pass_btn.click(function () {
-    new_pass.attr('hidden',false);
-    old_pass.attr('hidden',true);
+    new_pass.val(true);
+    old_pass.attr('readonly',false);
+    old_pass.val('');
     return false;
 });
 

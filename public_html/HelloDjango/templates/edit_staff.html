@@ -14,8 +14,8 @@
         </div>
         <div class="container-fluid row">
             <label>Пороль</label>
-            <input type="password" id="new_pass" hidden="" class="form-control col-1 w-50" name="new_password" placeholder="Введите новый пороль" value="">
-            <input type="password" id="old_pass" readonly required class="form-control col-1 w-50" name="old_password" value="{{ current_user.password }}">
+            <input type="hidden" id="new_pass" name="new_password" value="">
+            <input type="password" id="old_pass" readonly required class="form-control col-1 w-50" name="password" value="{{ current_user.password }}">
             <button role="button" class="btn btn-outline-secondary col-auto m-1" id="change_pass">Изменить пороль</button>
         </div>
         <div>
