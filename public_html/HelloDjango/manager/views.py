@@ -446,7 +446,7 @@ def Technic_Driver_view(request, ch_day):
 
     technic_driver_list = TechnicDriver.objects.filter(date=current_day)
     out['technic_driver_list'] = technic_driver_list.order_by('technic__name__name')
-    out['work_driver_list'] = work_driver_list
+    out['work_driver_list'] = work_driver_list.order_by('driver__user__last_name')
 
     if request.method == 'POST':
         print(request.POST)
