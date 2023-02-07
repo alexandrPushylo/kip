@@ -829,22 +829,17 @@ def submitted_all_applications(request, ch_day):
 
 def get_work_TD_list(current_day, c_in=1, F_saved=False):
     out = []
-    if F_saved:
-        tech_app_today = ApplicationTechnic.objects.filter(Q(app_for_day__date=current_day),
-                                                           Q(app_for_day__status=ApplicationStatus.objects.get(
-                                                               status=STATUS_AP['submitted'])) |
-                                                           Q(app_for_day__status=ApplicationStatus.objects.get(
-                                                               status=STATUS_AP['approved'])) |
-                                                           Q(app_for_day__status=ApplicationStatus.objects.get(
-                                                               status=STATUS_AP['saved']))
-                                                           ).values_list('technic_driver')
-    else:
-        tech_app_today = ApplicationTechnic.objects.filter(Q(app_for_day__date=current_day),
-                                                       Q(app_for_day__status=ApplicationStatus.objects.get(
-                                                           status=STATUS_AP['submitted'])) |
-                                                       Q(app_for_day__status=ApplicationStatus.objects.get(
-                                                           status=STATUS_AP['approved']))
-                                                       ).values_list('technic_driver')
+    tech_app_status = ApplicationTechnic.objects.filter(
+        Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['submitted'])) |
+        Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['approved']))
+    )
+    if F_saved: #if ApplicationTechnic have status = 'saved'
+        tech_app_status = tech_app_status.filter(
+            Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['saved'])))
+
+    app_list_day = tech_app_status.filter(app_for_day__date=current_day)
+    app_list_priority = app_list_day#.filter(priority=1)
+    tech_app_today = app_list_priority.values_list('technic_driver')
     _out = [_[0] for _ in tech_app_today]
     for _i in set(_out):
         if _out.count(_i)>c_in:
@@ -863,12 +858,22 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
             out[f.name.name] = TechnicDriver.objects.filter(status=True, date=current_day,
                                                             technic__name__name=f.name.name).count()
 
-    app_tech = ApplicationTechnic.objects.filter(Q(app_for_day__date=current_day),
-                                                       Q(app_for_day__status=ApplicationStatus.objects.get(
+    # app_tech = ApplicationTechnic.objects.filter(Q(app_for_day__date=current_day),
+    #                                                    Q(app_for_day__status=ApplicationStatus.objects.get(
+    #                                                        status=STATUS_AP['submitted'])) |
+    #                                                    Q(app_for_day__status=ApplicationStatus.objects.get(
+    #                                                        status=STATUS_AP['approved']))
+    #                                                    ).values_list('technic_driver','technic_driver__technic__name__name')
+
+    app_list_today = ApplicationTechnic.objects.filter(app_for_day__date=current_day)
+    app_list_submit_approv = app_list_today.filter(Q(app_for_day__status=ApplicationStatus.objects.get(
                                                            status=STATUS_AP['submitted'])) |
-                                                       Q(app_for_day__status=ApplicationStatus.objects.get(
-                                                           status=STATUS_AP['approved']))
-                                                       ).values_list('technic_driver','technic_driver__technic__name__name')
+                                                   Q(app_for_day__status=ApplicationStatus.objects.get(
+                                                       status=STATUS_AP['approved']))
+                                                   )
+    app_list_priority = app_list_submit_approv.filter(priority=1)
+    app_tech = app_list_priority.values_list('technic_driver', 'technic_driver__technic__name__name')
+
     work_app_tech_list = [_[1] for _ in app_tech]
     for i in set(work_app_tech_list):
         if work_app_tech_list.count(i)+c_in > out[i]:
