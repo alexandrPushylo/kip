@@ -49,7 +49,7 @@ def conflict_correction_view(request, ch_day, id_applications):
     get_prepare_data(out, request, selected_day=ch_day)
     current_day = get_current_day(ch_day)
     out["date_of_target"] = current_day
-    out['tech_app_list'] = tech_app_list
+    out['tech_app_list'] = tech_app_list.order_by('technic_driver__driver__driver__user__last_name')
     out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day, 1)
     out['work_TD_list'] = get_work_TD_list(current_day, 0)
     out["uniq_name_of_vehicles"] = TechnicName.objects.all().order_by('name')
@@ -102,7 +102,7 @@ def conflict_resolution_view(request, ch_day):
             'app_for_day__construction_site__foreman__user__last_name',
             'app_for_day__construction_site__address',
             'technic_driver_id'
-        )
+        ).order_by('app_for_day__construction_site__foreman__user__last_name')
         today_technic_applications_list.append((v, today_technic_applications))
     out['today_technic_applications'] = today_technic_applications_list
 
