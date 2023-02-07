@@ -5,13 +5,13 @@
 <div class="container mt-3">
         <h3 class="text-center m-0">
             {% if CH_DAY == 'next_day' %}
-                <a href="{% url 'application_for_driver' 'current_day' %}" class="btn " aria-current="page">
+                <a href="{% url 'application_for_driver' 'current_day' current_user.id %}" class="btn " aria-current="page">
                 Сегодня <
                 </a>
                 {{ DAY }}
             {% else %}
                 {{ DAY }}
-                <a href="{% url 'application_for_driver' 'next_day' %}" class="btn fw-light" aria-current="page">
+                <a href="{% url 'application_for_driver' 'next_day' current_user.id %}" class="btn fw-light" aria-current="page">
                 > Завтра
                 </a>
             {% endif %}
@@ -23,8 +23,7 @@
       <div class="card-body">
 
         <p class="card-text">
-            <b class="fs-5">{{ WEEKDAY }},</b>
-            <b class="fs-5">{{ date_of_target }}</b>
+            <b class="fs-5">{{ DAY }},</b>
             <br>
             <b class="fs-5">{{ current_user.last_name }} {{ current_user.first_name }}</b>
             <hr>
@@ -33,7 +32,7 @@
         <ul class="container-fluid" >
             {% for v in applications %}
                 <div class=" mb-3" id="vehicle_list">
-                    <label  class= "fw-bold start-50">{{ forloop.counter }}) - {{ v.app_for_day.construction_site.address }} ({{ v.app_for_day.construction_site.foreman }})</label>
+                    <label  class= "fw-bold start-50">{{ v.priority }}) - {{ v.app_for_day.construction_site.address }} ({{ v.app_for_day.construction_site.foreman }})</label>
                     <textarea class="form-control app_description mb-2" id="floatingInputValue" disabled rows="1">{{ v.description }}</textarea>
                 </div>
             {% endfor %}
@@ -52,6 +51,9 @@
 
 {% block bottom_panel %}
 <div class="input-group d-flex justify-content-center align-items-center">
+{% if post == 'Администратор' %}
+    <a href="{% url 'driver_app_list' CH_DAY  %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
+{% endif %}
 
 <a href="{% url 'show_today_applications' CH_DAY  %}" class="btn btn-outline-secondary active m-1" aria-current="page">Все заявки на {{ DAY }}</a>
 </div>

@@ -553,10 +553,13 @@ def show_applications_view(request, ch_day):
     return render(request, "main.html", out)
 
 
-def show_application_for_driver(request, ch_day):
+def show_application_for_driver(request, ch_day, id_user=None):
     current_day = get_current_day(ch_day)
     out = {}
-    current_user = User.objects.get(username=request.user)
+    if id_user:
+        current_user = User.objects.get(id=id_user)
+    else:
+        current_user = User.objects.get(username=request.user)
     out["current_user"] = current_user
     get_prepare_data(out, request, current_day, selected_day=ch_day)
     out["date_of_target"] = current_day.strftime('%d %B')
@@ -982,7 +985,7 @@ def show_start_page(request):
         elif is_master(request.user):
             return HttpResponseRedirect("applications/next_day")
         elif is_driver(request.user):
-            return HttpResponseRedirect("personal_application/today")
+            return HttpResponseRedirect(f"personal_application/today/{request.user.id}")
         elif is_mechanic(request.user):
             return HttpResponseRedirect("/today_app/today")
         elif is_employee_supply(request.user):
