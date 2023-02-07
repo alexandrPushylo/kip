@@ -61,8 +61,11 @@
                         {% elif v.id in conf_app_id_list %}
                         style="color: red"
                         {% endif %}
-                >{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }}
-                    {% if v.technic_driver.id in work_TD_list  %} <i class="fa-sharp fa-solid fa-circle-exclamation"></i>{% endif %})
+                >{% if v.technic_driver.id in work_TD_list  %}
+                    <b>{{ v.priority }}) {{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})</b>
+                {% else %}
+                    {{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
+                {% endif %}
                 </h6>
                   {% if v.description %}
                 <textarea class="form-control app_description" readonly>{{ v.description }}</textarea>

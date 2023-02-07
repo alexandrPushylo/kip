@@ -48,6 +48,8 @@ from manager.views import tabel_workday_view
 
 from manager.views import Technic_Driver_view
 
+from manager.views import driver_app_list_view
+
 
 
 urlpatterns = [
@@ -82,7 +84,9 @@ urlpatterns = [
     path('success_app/<int:id_application>', success_application, name='success_application'),
     path('conflict_resolution/<str:ch_day>', conflict_resolution_view, name="conflict_resolution"),
     path('conflict_correction/<str:ch_day>/<str:id_applications>', conflict_correction_view, name="conflict_correction"),
-    path('personal_application/<str:ch_day>', show_application_for_driver, name='application_for_driver'),
+    path('personal_application/<str:ch_day>/<str:id_user>', show_application_for_driver, name='application_for_driver'),
+
+    path('driver_app_list/<str:ch_day>', driver_app_list_view, name='driver_app_list'),
 
     path('approv_all_applications/<str:ch_day>', approv_all_applications, name='approv_all_applications'),
     path('submitted_all_applications/<str:ch_day>', submitted_all_applications, name='submitted_all_applications'),
