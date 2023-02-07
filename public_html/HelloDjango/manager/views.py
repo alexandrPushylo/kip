@@ -619,7 +619,7 @@ def create_new_application(request, id_application):
     out = {}
     current_user = request.user
     current_application = ApplicationToday.objects.get(id=id_application)
-    current_date = current_application.date######### del
+    current_date = current_application.date
     get_prepare_data(out, request, selected_day=get_CH_day(current_application.date))
     out["current_user"] = current_user
     out["construction_site"] = current_application.construction_site
@@ -629,7 +629,7 @@ def create_new_application(request, id_application):
     out['work_TD_list'] = get_work_TD_list(current_application.date, 0)
     tech_driver_list = TechnicDriver.objects.filter(date=current_date, status=True)
     tech_name_list = TechnicName.objects.all().order_by('name')
-    work_tech_name_list = TechnicDriver.objects.filter(date=current_date, driver__isnull=False).values_list('technic__name__name').distinct()######
+    work_tech_name_list = TechnicDriver.objects.filter(date=current_date, driver__isnull=False).values_list('technic__name__name').distinct()
     work_tech_name_list = [_[0] for _ in work_tech_name_list]
     out['work_tech_name_list'] = work_tech_name_list
 
@@ -667,7 +667,7 @@ def create_new_application(request, id_application):
             if _id == '' and driver_list[n] == '':
                 _td = tech_driver_list.filter(technic__name__name=vehicle_list[n]).values_list(
                     'id', 'driver__driver__user__last_name')
-                if _td.exclude(id__in=work_TD_list_F_saved).count() == 0:
+                if _td.exclude(id__in=work_TD_list_F_saved).count() == 0:   #if not free td
                     _td_ch = rand_choice(_td)
                     id_tech_drv_list[n] = _td_ch[0]
                     driver_list[n] = _td_ch[1]
@@ -676,7 +676,6 @@ def create_new_application(request, id_application):
                     id_tech_drv_list[n] = _td.exclude(id__in=work_TD_list_F_saved).first()[0]
                     driver_list[n] = _td.exclude(id__in=work_TD_list_F_saved).first()[1]
                     work_TD_list_F_saved.append(id_tech_drv_list[n])
-
 
         _len__id_app_list = len(id_app_tech)
         for i, _id in enumerate(id_app_tech):
