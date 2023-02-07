@@ -41,6 +41,27 @@ from manager.utilities import choice as rand_choice
 # ------FUNCTION VIEW----------------------
 
 
+def driver_app_list_view(request, ch_day):
+    out = {}
+    current_day = get_current_day(ch_day)
+    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    current_day = get_current_day(ch_day)
+    current_app_tech = ApplicationTechnic.objects.filter(
+        technic_driver__status=True,
+        app_for_day__date=current_day,
+        app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['approved']))
+    current_driver_list = DriverTabel.objects.filter(status=True,
+                                                     date=current_day,
+                                                     technicdriver__status=True).distinct()
+    app_list = []
+    for drv in current_driver_list:
+        _app = current_app_tech.filter(technic_driver__driver=drv).order_by('priority')
+        app_list.append((drv, _app))
+    out['app_list'] = app_list
+
+    return render(request, 'driver_app_list.html', out)
+
+
 def conflict_correction_view(request, ch_day, id_applications):
     out = {}
     id_application_list = id_applications.split(',')[:-1]
