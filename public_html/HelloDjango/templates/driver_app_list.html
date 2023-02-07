@@ -25,21 +25,27 @@
         <div class="col-auto">
         <div class="card shadow-lg" style="width: 18rem; margin-bottom:15px; background-color: rgba(247,247,248,0.75)">
           <div class="card-body">
-              <h5 class="card-title fw-bold" style="text-align: center">{{drv.driver.user.last_name}} {{drv.driver.user.first_name}}</h5>
+              <h5 class="card-title fw-bold" style="text-align: center">
+
+                  <a href="{% url 'application_for_driver' CH_DAY drv.driver.user.id %}" class="btn btn-link" aria-current="page">
+                      <b>{{drv.driver.user.last_name}} {{drv.driver.user.first_name}}</b>
+                  </a>
+              </h5>
 
             {% for a in app %}
+                <hr>
               <h6 class="card-text fw-bold">{{ a.technic_driver.technic.name.name }}</h6>
                 <h6 class="card-text"><b>{{ a.priority }})</b> {{ a.app_for_day.construction_site.address }} ({{a.app_for_day.construction_site.foreman.user.last_name}})</h6>
                 <h6 class="card-text"></h6>
                 <textarea class="form-control app_description" readonly>{{ a.description }}</textarea>
                 <h6 class="card-text"></h6>
                 <h6 class="card-text"></h6>
-                <hr>
+
             {% endfor %}
 
-            <div class="btn-group ">
-                <a href="{% url 'application_for_driver' CH_DAY drv.driver.user.id %}" class="btn btn-outline-primary m-1" aria-current="page"><i class="fa-solid fa-circle-info"></i></a>
-            </div>
+{#            <div class="btn-group ">#}
+{#                <a href="{% url 'application_for_driver' CH_DAY drv.driver.user.id %}" class="btn btn-outline-primary m-1" aria-current="page"><i class="fa-solid fa-circle-info"></i></a>#}
+{#            </div>#}
           </div>
         </div>
         </div>
