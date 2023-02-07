@@ -67,10 +67,12 @@ def conflict_correction_view(request, ch_day, id_applications):
         for app_id in app_id_list:
             app = ApplicationTechnic.objects.get(id=app_id)
             if request.POST.get(f"vehicle_{app_id}"):
-                app.technic_driver = TechnicDriver.objects.get(date=current_day,
-                                                driver__driver__user__last_name=request.POST.get(f"driver_{app_id}"),
-                                                technic__name__name=request.POST.get(f"vehicle_{app_id}"))
+                app.technic_driver = TechnicDriver.objects.get(
+                    date=current_day,
+                    driver__driver__user__last_name=request.POST.get(f"driver_{app_id}"),
+                    technic__name__name=request.POST.get(f"vehicle_{app_id}"))
                 app.description = request.POST.get(f"description_{app_id}")
+                app.priority = request.POST.get(f"priority_{app_id}")
 
                 app.save()
             else:
