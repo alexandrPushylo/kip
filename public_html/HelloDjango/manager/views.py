@@ -597,7 +597,7 @@ def show_today_applications(request, ch_day):
             app.priority = pr
             app.description = desc
             app.save()
-
+        return HttpResponseRedirect(f'/today_app/{ch_day}')
     return render(request, "today_applications.html", out)
 
 
@@ -859,13 +859,6 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
         for f in Technic.objects.all():
             out[f.name.name] = TechnicDriver.objects.filter(status=True, date=current_day,
                                                             technic__name__name=f.name.name).count()
-
-    # app_tech = ApplicationTechnic.objects.filter(Q(app_for_day__date=current_day),
-    #                                                    Q(app_for_day__status=ApplicationStatus.objects.get(
-    #                                                        status=STATUS_AP['submitted'])) |
-    #                                                    Q(app_for_day__status=ApplicationStatus.objects.get(
-    #                                                        status=STATUS_AP['approved']))
-    #                                                    ).values_list('technic_driver','technic_driver__technic__name__name')
 
     app_list_today = ApplicationTechnic.objects.filter(app_for_day__date=current_day)
     app_list_submit_approv = app_list_today.filter(Q(app_for_day__status=ApplicationStatus.objects.get(
