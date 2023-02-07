@@ -535,7 +535,6 @@ def show_applications_view(request, ch_day):
 def show_application_for_driver(request, ch_day):
     current_day = get_current_day(ch_day)
     out = {}
-
     current_user = User.objects.get(username=request.user)
     out["current_user"] = current_user
     get_prepare_data(out, request, current_day, selected_day=ch_day)

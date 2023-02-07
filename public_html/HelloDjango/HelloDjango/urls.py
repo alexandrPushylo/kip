@@ -50,6 +50,7 @@ from manager.views import Technic_Driver_view
 
 
 
+
 urlpatterns = [
     path('', show_start_page, name='start_page'),
     path('applications/<str:ch_day>', show_applications_view, name='application_list'),
@@ -83,6 +84,7 @@ urlpatterns = [
     path('conflict_resolution/<str:ch_day>', conflict_resolution_view, name="conflict_resolution"),
     path('conflict_correction/<str:ch_day>/<str:id_applications>', conflict_correction_view, name="conflict_correction"),
     path('personal_application/<str:ch_day>', show_application_for_driver, name='application_for_driver'),
+
 
     path('approv_all_applications/<str:ch_day>', approv_all_applications, name='approv_all_applications'),
     path('submitted_all_applications/<str:ch_day>', submitted_all_applications, name='submitted_all_applications'),
