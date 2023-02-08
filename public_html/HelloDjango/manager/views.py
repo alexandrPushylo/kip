@@ -322,19 +322,23 @@ def tabel_driver_view(request, ch_day):
     current_day = get_current_day(ch_day)
     get_prepare_data(out, request, current_day, selected_day=ch_day)
 
-    driver_list = StaffDriver.objects.all()
+    ####
+    prepare_driver_table(ch_day)    ####!!!!
+    ###
+    #
+    # driver_list = StaffDriver.objects.all()
+    # if DriverTabel.objects.filter(date=current_day).count() == 0:
+    #     if ch_day == 'next_day':
+    #         try:
+    #             for _drv in DriverTabel.objects.filter(date=TODAY):
+    #                 DriverTabel.objects.create(driver=_drv.driver, date=current_day, status=_drv.status)
+    #         except DriverTabel.DoesNotExist:
+    #             for drv in driver_list:
+    #                 DriverTabel.objects.create(driver=drv, date=current_day)
+    #     else:
+    #         for drv in driver_list:
+    #             DriverTabel.objects.create(driver=drv, date=current_day)
 
-    if DriverTabel.objects.filter(date=current_day).count() == 0:
-        if ch_day == 'next_day':
-            try:
-                for _drv in DriverTabel.objects.filter(date=TODAY):
-                    DriverTabel.objects.create(driver=_drv.driver, date=current_day, status=_drv.status)
-            except DriverTabel.DoesNotExist:
-                for drv in driver_list:
-                    DriverTabel.objects.create(driver=drv, date=current_day)
-        else:
-            for drv in driver_list:
-                DriverTabel.objects.create(driver=drv, date=current_day)
 
     driver_today_tabel = DriverTabel.objects.filter(date=current_day)
     out['driver_list'] = driver_today_tabel.order_by('driver__user__last_name')
@@ -437,11 +441,17 @@ def Technic_Driver_view(request, ch_day):
     out = {}
     current_day = get_current_day(ch_day)
     get_prepare_data(out, request, current_day, selected_day=ch_day)
+####################### TEST
+    if DriverTabel.objects.filter(date=current_day, status=True).count() == 0:
+        prepare_driver_table(ch_day)
+
+
 
     work_driver_list = DriverTabel.objects.filter(date=current_day, status=True)
     if work_driver_list.count()==0:
-        return HttpResponseRedirect('tabel_driver/next_day')
-        # raise  'work_driver_list is empty'################
+        # return HttpResponseRedirect('/tabel_driver/next_day')
+        raise 'work_driver_list is empty'################
+######################
 
     tech_drv_list_today = TechnicDriver.objects.filter(date=TODAY)
 
@@ -1066,6 +1076,22 @@ def get_CH_day(day):
         return 'current_day'
     else:
         return 'next_day'
+
+
+def prepare_driver_table(ch_day):
+    current_day = get_current_day(ch_day)
+    driver_list = StaffDriver.objects.all()
+    if DriverTabel.objects.filter(date=current_day).count() == 0:
+        if ch_day == 'next_day':
+            try:
+                for _drv in DriverTabel.objects.filter(date=TODAY):
+                    DriverTabel.objects.create(driver=_drv.driver, date=current_day, status=_drv.status)
+            except DriverTabel.DoesNotExist:
+                for drv in driver_list:
+                    DriverTabel.objects.create(driver=drv, date=current_day)
+        else:
+            for drv in driver_list:
+                DriverTabel.objects.create(driver=drv, date=current_day)
 
 
 # ---------------------------------------------------------------
