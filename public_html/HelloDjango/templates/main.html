@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container container-fluid mx-auto">
-
+    {% block choosedate %}
     <div class="container mt-3">
         <h3 class="text-center m-0">
             {% if CH_DAY == 'next_day' %}
@@ -19,6 +19,7 @@
 
         </h3>
     </div>
+    {% endblock %}
 
     <div class="container mt-5">
         <div class="row">

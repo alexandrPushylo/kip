@@ -41,6 +41,22 @@ from manager.utilities import choice as rand_choice
 # ------FUNCTION VIEW----------------------
 
 
+def foreman_app_list_view(request, ch_day):
+    out = {}
+    current_day = get_current_day(ch_day)
+    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    foreman_list = StaffForeman.objects.filter()
+    app_list = []
+    for _fman in foreman_list:
+        _app = ApplicationToday.objects.filter(date=current_day, construction_site__foreman=_fman)
+        app_list.append((_fman, _app))
+
+    out['app_list'] = app_list
+    out['foreman_list'] = foreman_list
+
+    return render(request, 'foreman_app_list.html', out)
+
+
 def driver_app_list_view(request, ch_day):
     out = {}
     current_day = get_current_day(ch_day)
@@ -503,12 +519,17 @@ def clear_application_view(request, id_application):
     return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
 
 
-def show_applications_view(request, ch_day):
+def show_applications_view(request, ch_day, id_user=None):
     if request.user.is_anonymous:
         return HttpResponseRedirect('/')
     current_day = get_current_day(ch_day)
     out = {"constr_site_list": []}
-    current_user = request.user
+
+    if id_user:
+        current_user = User.objects.get(id=id_user)
+        out['current_user'] = current_user
+    else:
+        current_user = request.user
     get_prepare_data(out, request, current_day, selected_day=ch_day)
 
     construction_site_list = ConstructionSite.objects.filter(status=ConstructionSiteStatus.objects.get(status=STATUS_CS['opened']))
@@ -516,12 +537,14 @@ def show_applications_view(request, ch_day):
     applications_today_list_all = ApplicationToday.objects.filter(date=current_day)
     if applications_today_list_all.count() < construction_site_list.count():
         for constr_site in construction_site_list:
-            ApplicationToday.objects.get_or_create(construction_site=constr_site, date=current_day,
-                                            status=ApplicationStatus.objects.get(status=STATUS_AP['absent']))
+            _app, _ = ApplicationToday.objects.get_or_create(construction_site=constr_site, date=current_day)
+            if _:
+                _app.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
+                _app.save()
     else:
-        if construction_site_list.count() > applications_today_list_all.count():
-            print("need create")
-
+        if construction_site_list.count() < applications_today_list_all.count():
+            print("need delete")
+            applications_today_list_all.exclude(construction_site__in=construction_site_list).delete()
         else:
             print("OK")
 
@@ -550,7 +573,10 @@ def show_applications_view(request, ch_day):
         out['today_applications_list'].append({'app_today': appToday, 'apps_tech': appTech})
         if appTech.count()==0:
             appToday.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
-    return render(request, "main.html", out)
+    if id_user:
+        return render(request, "extend/admin_application_foreman.html", out)
+    else:
+        return render(request, "main.html", out)
 
 
 def show_application_for_driver(request, ch_day, id_user=None):
@@ -571,6 +597,8 @@ def show_application_for_driver(request, ch_day, id_user=None):
 
     out['applications'] = applications
 
+    if is_admin(request.user):
+        return render(request, 'extend/admin_app_for_driver.html', out)
     return render(request, 'applications_for_driver.html', out)
 
 
@@ -636,7 +664,8 @@ def show_info_application(request, id_application):
 
     list_of_vehicles = ApplicationTechnic.objects.filter(app_for_day=current_application)
     out["list_of_vehicles"] = list_of_vehicles
-
+    if is_admin(request.user):
+        return render(request, 'extend/admin_show_inf_app.html', out)
     return render(request, "show_info_application.html", out)
 
 

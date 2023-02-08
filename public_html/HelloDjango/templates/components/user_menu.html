@@ -17,9 +17,9 @@
 
             <li><a class="dropdown-item fw-bolder" href="{% url 'construction_sites' %}">Объекты</a></li>
             <hr>
-            <li><a class="dropdown-item fw-bolder" href="{% url 'driver_app_list' CH_DAY %}">! Drivers</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'driver_app_list' CH_DAY %}">Водители</a></li>
             {% if user.username == 'admin' %}
-
+                <li><a class="dropdown-item fw-bolder" href="{% url 'foreman_app_list' CH_DAY %}">Прорабы</a></li>
             {% endif %}
 
 
