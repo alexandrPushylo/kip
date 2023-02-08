@@ -587,6 +587,8 @@ def show_application_for_driver(request, ch_day, id_user=None):
 
     out['applications'] = applications
 
+    if is_admin(request.user):
+        return render(request, 'extend/admin_app_for_driver.html', out)
     return render(request, 'applications_for_driver.html', out)
 
 
