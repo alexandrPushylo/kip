@@ -519,12 +519,17 @@ def clear_application_view(request, id_application):
     return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
 
 
-def show_applications_view(request, ch_day):
+def show_applications_view(request, ch_day, id_user=None):
     if request.user.is_anonymous:
         return HttpResponseRedirect('/')
     current_day = get_current_day(ch_day)
     out = {"constr_site_list": []}
-    current_user = request.user
+
+    if id_user:
+        current_user = User.objects.get(id=id_user)
+        out['current_user'] = current_user
+    else:
+        current_user = request.user
     get_prepare_data(out, request, current_day, selected_day=ch_day)
 
     construction_site_list = ConstructionSite.objects.filter(status=ConstructionSiteStatus.objects.get(status=STATUS_CS['opened']))
@@ -566,7 +571,10 @@ def show_applications_view(request, ch_day):
         out['today_applications_list'].append({'app_today': appToday, 'apps_tech': appTech})
         if appTech.count()==0:
             appToday.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
-    return render(request, "main.html", out)
+    if id_user:
+        return render(request, "extend/admin_application_foreman.html", out)
+    else:
+        return render(request, "main.html", out)
 
 
 def show_application_for_driver(request, ch_day, id_user=None):
