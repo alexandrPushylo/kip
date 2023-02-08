@@ -3,19 +3,6 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-###---------------------------------------------------------------------------------------------------------------------
-def get_def_status_application():
-    return ApplicationStatus.objects.get(status='Отсутствует')
-
-def get_def_status_constr_site():
-    if ConstructionSiteStatus.objects.get(status='Открыт'):
-        return ConstructionSiteStatus.objects.get(status='Открыт').id
-    else:
-        ConstructionSiteStatus.objects.create(status='Открыт').save()
-        return ConstructionSiteStatus.objects.get(status='Открыт').id
-
-###---------------------------------------------------------------------------------------------------------------------
-
 
 #------------------------------STAFF-----------------------------------------------------------------------------------
 class StaffAdmin(models.Model):
