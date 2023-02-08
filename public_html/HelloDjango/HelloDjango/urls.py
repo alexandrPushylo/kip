@@ -96,5 +96,5 @@ urlpatterns = [
     path('approv_all_applications/<str:ch_day>', approv_all_applications, name='approv_all_applications'),
     path('submitted_all_applications/<str:ch_day>', submitted_all_applications, name='submitted_all_applications'),
 
-    path('debug/', include('debug_toolbar.urls')),
+    # path('debug/', include('debug_toolbar.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
