@@ -56,6 +56,7 @@ from manager.views import foreman_app_list_view
 urlpatterns = [
     path('', show_start_page, name='start_page'),
     path('applications/<str:ch_day>', show_applications_view, name='application_list'),
+    path('applications/<int:id_user>/<str:ch_day>', show_applications_view, name='application_list'),
 
     path('construction_sites/', show_construction_sites_view, name='construction_sites'),
     path('edit_construction_sites/<int:id_construction_sites>', edit_construction_sites_view, name='edit_construction_sites'),
