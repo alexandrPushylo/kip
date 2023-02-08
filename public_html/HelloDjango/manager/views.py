@@ -537,12 +537,14 @@ def show_applications_view(request, ch_day, id_user=None):
     applications_today_list_all = ApplicationToday.objects.filter(date=current_day)
     if applications_today_list_all.count() < construction_site_list.count():
         for constr_site in construction_site_list:
-            ApplicationToday.objects.get_or_create(construction_site=constr_site, date=current_day,
-                                            status=ApplicationStatus.objects.get(status=STATUS_AP['absent']))
+            _app, _ = ApplicationToday.objects.get_or_create(construction_site=constr_site, date=current_day)
+            if _:
+                _app.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
+                _app.save()
     else:
-        if construction_site_list.count() > applications_today_list_all.count():
-            print("need create")
-
+        if construction_site_list.count() < applications_today_list_all.count():
+            print("need delete")
+            applications_today_list_all.exclude(construction_site__in=construction_site_list).delete()
         else:
             print("OK")
 
