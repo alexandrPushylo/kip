@@ -559,13 +559,17 @@ def show_applications_view(request, ch_day, id_user=None):
 
         out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day)
         out['work_TD_list'] = get_work_TD_list(current_day)
+        out['submitted_app_list'] = ApplicationToday.objects.filter(
+            date=current_day, status=ApplicationStatus.objects.get(status=STATUS_AP['submitted']))
 
     if is_foreman(current_user):
         _foreman = StaffForeman.objects.get(user=current_user).user
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman__user=_foreman, date=current_day)
+        out['saved_app_list'] = app_for_day.filter(status=ApplicationStatus.objects.get(status=STATUS_AP['saved']))
     if is_master(current_user):
         _foreman = StaffMaster.objects.get(user=current_user).foreman
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman=_foreman, date=current_day)
+        out['saved_app_list'] = app_for_day.filter(status=ApplicationStatus.objects.get(status=STATUS_AP['saved']))
 
     out['today_applications_list'] = []
     for appToday in app_for_day:
