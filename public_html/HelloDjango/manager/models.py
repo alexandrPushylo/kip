@@ -211,6 +211,7 @@ class Variable(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название переменной')
     value = models.CharField(max_length=512, null=True, blank=True, verbose_name='Значение переменной')
     flag = models.BooleanField(default=False, verbose_name='Флаг переменной')
+    description = models.TextField(max_length=1024, null=True, blank=True, verbose_name="Описание")
     def __str__(self): return f'{self.name} {self.value} [{self.flag}]'
     class Meta:
         verbose_name = "Переменная"
