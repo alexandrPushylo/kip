@@ -41,6 +41,22 @@ from manager.utilities import choice as rand_choice
 # ------FUNCTION VIEW----------------------
 
 
+def foreman_app_list_view(request, ch_day):
+    out = {}
+    current_day = get_current_day(ch_day)
+    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    foreman_list = StaffForeman.objects.filter()
+    app_list = []
+    for _fman in foreman_list:
+        _app = ApplicationToday.objects.filter(date=current_day, construction_site__foreman=_fman)
+        app_list.append((_fman, _app))
+
+    out['app_list'] = app_list
+    out['foreman_list'] = foreman_list
+
+    return render(request, 'foreman_app_list.html', out)
+
+
 def driver_app_list_view(request, ch_day):
     out = {}
     current_day = get_current_day(ch_day)
