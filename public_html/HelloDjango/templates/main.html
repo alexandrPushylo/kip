@@ -3,12 +3,12 @@
 
 {% block indicator %}
 {% if post == 'Администратор' %}
-    {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' CH_DAY %}" class="btn btn-danger ">Конфликты</a>
-     {% elif not conflicts_vehicles_list and submitted_app_list %}<a href="{% url 'approv_all_applications' CH_DAY %}" class="btn btn-success ">Одобрить все заявки</a>
+    {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' CH_DAY %}" class="btn btn-sm btn-danger ">Конфликты</a>
+     {% elif not conflicts_vehicles_list and submitted_app_list %}<a href="{% url 'approv_all_applications' CH_DAY %}" class="btn btn-sm btn-success ">Одобрить все заявки</a>
     {% else %}{% endif %}
 {% elif post == 'Прораб' or 'Мастер' %}
     {% if saved_app_list %}
-    <a href="{% url 'submitted_all_applications' CH_DAY %}"  class="btn btn-warning  " aria-current="page">Подать все заявки</a>
+    <a href="{% url 'submitted_all_applications' CH_DAY %}"  class="btn btn-sm btn-warning  " aria-current="page">Подать все заявки</a>
         {% endif %}
 {% endif %}
 {% endblock %}
