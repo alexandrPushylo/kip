@@ -1,7 +1,7 @@
 <nav class="navbar fixed-top" style="background-color: rgba(52,58,64,0.89); z-index:100;">
   <div class="container-fluid">
 {#    <a class="navbar-brand" style="color: azure" href="/">IWHub </a>#}
-    <a class="navbar-brand fs-6" style="color: azure" >{{ WEEKDAY_TODAY }}<br> {{ TODAY }} </a>
+    <a class="navbar-brand fs-6" style="color: azure" >{{ WEEKDAY_TODAY }}, {{ TODAY }} </a>
         {% if user.id != None %}
 {#            <a href="{% url 'add_application' 1 %}" class="btn btn-outline-light btn-md">Новая заявка </a>#}
 {#            {% include "components/search.html" %}#}
