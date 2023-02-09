@@ -94,8 +94,8 @@ def conflict_correction_view(request, ch_day, id_applications):
         'technic__name__name',
         'driver__driver__user__last_name',
         'id',
-        'applicationtechnic__app_for_day__construction_site__address',
-        'applicationtechnic__app_for_day__construction_site__foreman__user__last_name'
+        # 'applicationtechnic__app_for_day__construction_site__address',
+        # 'applicationtechnic__app_for_day__construction_site__foreman__user__last_name'
     )
     out['vehicle_and_driver'] = vehicle_and_driver
 
