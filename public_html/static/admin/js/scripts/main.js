@@ -4,4 +4,5 @@ $('.app_description').each(function () {
 
 $(".btn_driver_panel").click(function () {
     $('.driver_panel').toggle()
+    return false
 })
