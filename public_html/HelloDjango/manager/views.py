@@ -577,11 +577,11 @@ def show_applications_view(request, ch_day, id_user=None):
         l_out = []
         for _drv in driver_table_list:
             app = ApplicationTechnic.objects.filter(technic_driver__driver=_drv)
-            t_name = app.values_list('technic_driver__technic__name__name').distinct()
+            tech_drv = TechnicDriver.objects.filter(driver=_drv)
             attach_drv = Technic.objects.filter(attached_driver=_drv.driver).values_list('name__name')
             count = app.count()
 
-            l_out.append((_drv, t_name, count, attach_drv))
+            l_out.append((_drv, count, attach_drv, tech_drv))
         out["DRV_LIST"] = l_out
 
     if is_foreman(current_user):
