@@ -3,6 +3,10 @@ $('.app_description').each(function () {
 });
 
 $(".btn_driver_panel").click(function () {
-    $('.driver_panel').toggle()
+    if($('.driver_panel').is(':hidden')){
+        $('.driver_panel').prop('hidden',false)
+    }else {
+        $('.driver_panel').prop('hidden',true)
+    }
     return false
 })
