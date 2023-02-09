@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container container-fluid mx-auto">
+
     {% block choosedate %}
     <div class="container mt-3">
         <h3 class="text-center m-0">
@@ -33,8 +33,8 @@
         </h3>
     </div>
     {% endblock %}
-
-    <div class="container mt-5">
+<div class="container container-fluid row">
+    <div class="container mt-5 col-auto ">
         <div class="row">
         {% for a in today_applications_list %}
         <div class="col-auto">
@@ -74,12 +74,12 @@
                         style="color: red"
                         {% elif v.id in conf_app_id_list %}
                         style="color: red"
+                        {% elif v.technic_driver.id in work_TD_list %}
+                        style="color: #00a6ff">{{ v.priority }}) {{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
+                        {% else %}
+                            >{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
                         {% endif %}
-                >{% if v.technic_driver.id in work_TD_list  %}
-                    <b>{{ v.priority }}) {{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})</b>
-                {% else %}
-                    {{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
-                {% endif %}
+
                 </h6>
                   {% if v.description %}
                 <textarea class="form-control app_description" readonly>{{ v.description }}</textarea>
@@ -112,6 +112,36 @@
         {% endfor %}
     </div>
     </div>
+
+    {% if post == 'Администратор' %}
+    <div class="container  col-auto   position-fixed end-0 "style="margin-top: -70px; height: 90vh;">
+        <div class="card-body  overflow-auto "style="height: 90%" >
+        {% for drv, t_name, count, attach_drv in DRV_LIST %}
+            <ol class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-1 me-auto">
+                  <div class="fw-bold small
+                    {% if not drv.status %} text-danger
+                    {% elif count == 0 %} text-warning
+                    {% elif not count == 0 %} text-success
+                    {% endif %}
+                    ">{{drv.driver.user.last_name}}</div>
+                    <div class=" small">
+                        {% if t_name %}
+                            {% for tech in t_name %}{{ tech.0 }}<br>{% endfor %}
+                            {% else %}{% for tech in attach_drv %}{{ tech.0 }}<br>{% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="badge bg-primary rounded-pill"></span>
+              </li>
+            </ol>
+        {% endfor %}
+
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
 

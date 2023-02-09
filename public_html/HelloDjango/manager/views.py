@@ -572,6 +572,18 @@ def show_applications_view(request, ch_day, id_user=None):
         out['submitted_app_list'] = ApplicationToday.objects.filter(
             date=current_day, status=ApplicationStatus.objects.get(status=STATUS_AP['submitted']))
 
+        driver_table_list = DriverTabel.objects.filter(date=current_day).order_by('driver__user__last_name')
+
+        l_out = []
+        for _drv in driver_table_list:
+            app = ApplicationTechnic.objects.filter(technic_driver__driver=_drv)
+            t_name = app.values_list('technic_driver__technic__name__name').distinct()
+            attach_drv = Technic.objects.filter(attached_driver=_drv.driver).values_list('name__name')
+            count = app.count()
+
+            l_out.append((_drv, t_name, count, attach_drv))
+        out["DRV_LIST"] = l_out
+
     if is_foreman(current_user):
         _foreman = StaffForeman.objects.get(user=current_user).user
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman__user=_foreman, date=current_day)
