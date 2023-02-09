@@ -112,7 +112,7 @@
     </div>
 
     {% if post == 'Администратор' %}
-    <div class="container  col-auto   position-fixed end-0 "style="margin-top: -70px; height: 90vh;">
+    <div class="driver_panel container  col-auto   position-fixed end-0 "style="margin-top: -70px; height: 90vh;">
         <div class="card-body  overflow-auto "style="height: 90%" >
 
             {% for drv, count, attach_drv, tech_drv in DRV_LIST %}
@@ -166,20 +166,12 @@
 
 
     {% if post == 'Администратор' %}
-    {% if conflicts_vehicles_list %}
-        <a href="{% url 'conflict_resolution' CH_DAY %}"  class="btn btn-danger active " aria-current="page">Конфликты</a>
-        <a href="{% url 'approv_all_applications' CH_DAY %}"  class="btn btn-outline-success " aria-current="page">Утвердить все</a>
-    {% else %}
 
-        <a href="{% url 'approv_all_applications' CH_DAY %}"  class="btn btn-success active " aria-current="page">Одобрить все</a>
-    {% endif %}
     {% endif %}
 
-    {% if post == 'Прораб' or post == 'Мастер' %}
-        <a href="{% url 'submitted_all_applications' CH_DAY %}"  class="btn btn-success active " aria-current="page">Подать все заявки</a>
-    {% endif %}
 
     <a href="{% url 'show_today_applications' CH_DAY  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
 </div>
+    <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" ><i class="fa-solid fa-list"></i></button>
 {% endblock %}
 
