@@ -69,16 +69,14 @@
           <hr style="border-width: medium; border-color: green">
               <h6 class="card-text"><label><b>Список техники:</b></label> </h6>
               {% for v in a.apps_tech %}
-                <h6 class="card-text"
+                <h6 class="card-text
                         {% if v.technic_driver.technic.name.name in conflicts_vehicles_list %}
-                        style="color: red"
+                        text-danger
                         {% elif v.id in conf_app_id_list %}
-                        style="color: red"
+                        text-danger
                         {% elif v.technic_driver.id in work_TD_list %}
-                        style="color: #00a6ff">{{ v.priority }}) {{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
-                        {% else %}
-                            >{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
-                        {% endif %}
+                        text-primary
+                        {% endif %}">{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
 
                 </h6>
                   {% if v.description %}
