@@ -172,6 +172,13 @@
 
     <a href="{% url 'show_today_applications' CH_DAY  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
 </div>
-    <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" ><i class="fa-solid fa-list"></i></button>
+    <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" onclick="
+
+    if($('.driver_panel').is(':hidden')){
+        $('.driver_panel').prop('hidden',false)
+    }else {
+        $('.driver_panel').prop('hidden',true)
+    } return false
+"><i class="fa-solid fa-list"></i></button>
 {% endblock %}
 
