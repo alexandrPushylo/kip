@@ -585,6 +585,7 @@ def show_applications_view(request, ch_day, id_user=None):
             l_out.append((_drv, count, attach_drv, tech_drv))
         out["DRV_LIST"] = l_out
 
+
     if is_foreman(current_user):
         _foreman = StaffForeman.objects.get(user=current_user).user
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman__user=_foreman, date=current_day)
@@ -821,6 +822,7 @@ def signin_view(request):
         'WEEKDAY_TODAY': WEEKDAY[TODAY.weekday()],
         'err': False
     }
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -1131,3 +1133,28 @@ def prepare_driver_table(ch_day):
 
 
 # ---------------------------------------------------------------
+
+
+def get_var(var, value=False, flag=False):
+    try:
+        _var = Variable.objects.get(name=var)
+        if flag and not value:
+            return _var.flag
+        elif value and flag:
+            return _var.value, _var.flag
+        elif value and not flag:
+            return _var.value
+        else:
+            return _var
+    except Variable.DoesNotExist:
+        return None
+
+
+def set_var(name, value=None, flaf=False):
+    _var, _ = Variable.objects.update_or_create(
+        name=name,
+        value=value,
+        flag=flaf
+    )
+    _var.save()
+    return _var
