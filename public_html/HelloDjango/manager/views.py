@@ -592,8 +592,12 @@ def show_applications_view(request, ch_day, id_user=None):
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman=_foreman, date=current_day)
         out['saved_app_list'] = app_for_day.filter(status=ApplicationStatus.objects.get(status=STATUS_AP['saved']))
 
+    if is_employee_supply(current_user):
+        app_for_day = ApplicationToday.objects.filter(date=current_day)
+        out['saved_app_list'] = app_for_day.filter(status=ApplicationStatus.objects.get(status=STATUS_AP['saved']))
+
     out['today_applications_list'] = []
-    for appToday in app_for_day:
+    for appToday in app_for_day.order_by('construction_site__address'):
         appTech = ApplicationTechnic.objects.filter(app_for_day=appToday)
         out['today_applications_list'].append({'app_today': appToday, 'apps_tech': appTech})
         if appTech.count()==0:
@@ -896,7 +900,7 @@ def approv_all_applications(request, ch_day):
 
 
 def submitted_all_applications(request, ch_day):
-    if is_foreman(request.user) or is_master(request.user):
+    if is_foreman(request.user) or is_master(request.user) or is_employee_supply(request.user):
         current_day = get_current_day(ch_day)
         current_applications = ApplicationToday.objects.filter(
             status=ApplicationStatus.objects.get(status=STATUS_AP['saved']), date=current_day)
@@ -1043,7 +1047,7 @@ def show_start_page(request):
         elif is_mechanic(request.user):
             return HttpResponseRedirect("/today_app/today")
         elif is_employee_supply(request.user):
-            return HttpResponseRedirect("/today_app/today")
+            return HttpResponseRedirect("applications/next_day")
         else:
             return HttpResponseRedirect("/today_app/today")
 

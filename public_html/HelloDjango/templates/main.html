@@ -6,7 +6,7 @@
     {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' CH_DAY %}" class="btn btn-sm btn-danger ">Конфликты</a>
      {% elif not conflicts_vehicles_list and submitted_app_list %}<a href="{% url 'approv_all_applications' CH_DAY %}" class="btn btn-sm btn-success ">Одобрить все заявки</a>
     {% else %}{% endif %}
-{% elif post == 'Прораб' or 'Мастер' %}
+{% elif post == 'Прораб' or 'Мастер' or 'Снабжение' %}
     {% if saved_app_list %}
     <a href="{% url 'submitted_all_applications' CH_DAY %}"  class="btn btn-sm btn-warning  " aria-current="page">Подать все заявки</a>
         {% endif %}
@@ -44,6 +44,8 @@
                 border-warning
             {% elif a.app_today.status.status == 'Одобрена' %}
                 border-success
+            {% elif a.app_today.status.status == 'Подана' %}
+                border-primary
             {% else %}
                 border-dark
             {% endif %}
@@ -56,6 +58,8 @@
                     text-warning border-warning
                 {% elif a.app_today.status.status == 'Одобрена' %}
                     text-success border-success
+                {% elif a.app_today.status.status == 'Подана' %}
+                    text-primary border-primary
                 {% else %}
                     text-dark border-dark
                 {% endif %}
@@ -91,7 +95,9 @@
                 <a href="{% url 'add_application' a.app_today.id %}" class="btn btn-outline-primary  m-1" aria-current="page"><i class="fa-regular fa-pen-to-square"></i></a>
                 <a href="{% url 'clear_application' a.app_today.id %}" class="btn btn-outline-danger  m-1" aria-current="page"><i class="fa-solid fa-trash"></i></a>
                 {% if  a.app_today.status.status  == 'Сохранена' or post  == 'Администратор' and a.app_today.status.status  == 'Подана' %}
+{#                    {% if not post == "Снабжение" %}#}
                 <a href="{% url 'success_application' a.app_today.id %}" class="btn btn-outline-success  m-1" aria-current="page"><i class="fa-solid fa-check"></i></a>
+{#                    {% endif %}#}
                 {% endif %}
                 {% if user.username == 'admin' %}
                 <div class="dropup">
@@ -165,13 +171,14 @@
 <div class="input-group d-flex justify-content-center align-items-center">
 
 
-    {% if post == 'Администратор' %}
 
-    {% endif %}
+
+
 
 
     <a href="{% url 'show_today_applications' CH_DAY  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
 </div>
+    {% if post == 'Администратор' %}
     <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" onclick="
 
     if($('.driver_panel').is(':hidden')){
@@ -180,5 +187,6 @@
         $('.driver_panel').prop('hidden',true)
     } return false
 "><i class="fa-solid fa-list"></i></button>
+    {% endif %}
 {% endblock %}
 
