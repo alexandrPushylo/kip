@@ -585,6 +585,11 @@ def show_applications_view(request, ch_day, id_user=None):
             l_out.append((_drv, count, attach_drv, tech_drv))
         out["DRV_LIST"] = l_out
 
+        if request.POST.get('panel'):
+            _flag = request.POST.get('panel')
+            set_var(f'panel_{request.user.id}', value=request.user.id, flag=_flag)
+        out['var_drv_panel'] = get_var(f'panel_{request.user.id}')
+
 
     if is_foreman(current_user):
         _foreman = StaffForeman.objects.get(user=current_user).user
