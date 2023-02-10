@@ -497,7 +497,6 @@ def Technic_Driver_view(request, ch_day):
     out['work_driver_list'] = work_driver_list.order_by('driver__user__last_name')
 
     if request.method == 'POST':
-        print(request.POST)
         driver_list = request.POST.getlist('select_drv')
         tech_drv_id_list = request.POST.getlist('tech_drv_id')###   tech_status_
 
@@ -515,7 +514,10 @@ def Technic_Driver_view(request, ch_day):
                 _td.status = False
                 _td.save()
 
-    return render(request, 'technic_driver.html', out)
+    if 'tech_list' in request.path:
+        return render(request, 'tech_list.html', out)
+    else:
+        return render(request, 'technic_driver.html', out)
 
 #-----------------------------------------------------TABEL-------------------------------------------------------------
 
@@ -592,12 +594,18 @@ def show_applications_view(request, ch_day, id_user=None):
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman=_foreman, date=current_day)
         out['saved_app_list'] = app_for_day.filter(status=ApplicationStatus.objects.get(status=STATUS_AP['saved']))
 
+    if is_employee_supply(current_user):
+        app_for_day = ApplicationToday.objects.filter(date=current_day)
+        out['saved_app_list'] = app_for_day.filter(status=ApplicationStatus.objects.get(status=STATUS_AP['saved']))
+
+
     out['today_applications_list'] = []
-    for appToday in app_for_day:
+    for appToday in app_for_day.order_by('construction_site__address'):
         appTech = ApplicationTechnic.objects.filter(app_for_day=appToday)
         out['today_applications_list'].append({'app_today': appToday, 'apps_tech': appTech})
         if appTech.count()==0:
             appToday.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
+
     if id_user:
         return render(request, "extend/admin_application_foreman.html", out)
     else:
@@ -627,6 +635,19 @@ def show_application_for_driver(request, ch_day, id_user=None):
     return render(request, 'applications_for_driver.html', out)
 
 
+# def tech_list_view(request, ch_day):
+#     out = {}
+#     current_day = get_current_day(ch_day)
+#     get_prepare_data(out, request, current_day, ch_day)
+#
+#     tech_drv_list = TechnicDriver.objects.filter(date=current_day)
+#
+#     out['tech_drv_list'] = tech_drv_list
+#     if 'tech_list' in request.path:
+#         print(request.path)
+#     return render(request, 'tech_list.html', out)
+
+
 def show_today_applications(request, ch_day):
     current_day = get_current_day(ch_day)
     out = {}
@@ -645,7 +666,11 @@ def show_today_applications(request, ch_day):
     else:
         today_technic_applications = ApplicationTechnic.objects.filter(app_for_day__date=current_day)
 
-    app_tech_day = ApplicationTechnic.objects.filter(app_for_day__date=current_day)
+    app_tech_day = ApplicationTechnic.objects.filter(
+        Q(app_for_day__date=current_day),
+        Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['submitted'])) |
+        Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['approved']))
+    )
     driver_technic = app_tech_day.values_list('technic_driver__driver__driver__user__last_name',
                                               'technic_driver__technic__name__name').order_by(
         'technic_driver__driver__driver__user__last_name').distinct()
@@ -896,7 +921,7 @@ def approv_all_applications(request, ch_day):
 
 
 def submitted_all_applications(request, ch_day):
-    if is_foreman(request.user) or is_master(request.user):
+    if is_foreman(request.user) or is_master(request.user) or is_employee_supply(request.user):
         current_day = get_current_day(ch_day)
         current_applications = ApplicationToday.objects.filter(
             status=ApplicationStatus.objects.get(status=STATUS_AP['saved']), date=current_day)
@@ -1041,9 +1066,9 @@ def show_start_page(request):
         elif is_driver(request.user):
             return HttpResponseRedirect(f"personal_application/today/{request.user.id}")
         elif is_mechanic(request.user):
-            return HttpResponseRedirect("/today_app/today")
+            return HttpResponseRedirect("tech_list/today")
         elif is_employee_supply(request.user):
-            return HttpResponseRedirect("/today_app/today")
+            return HttpResponseRedirect("applications/next_day")
         else:
             return HttpResponseRedirect("/today_app/today")
 
@@ -1052,7 +1077,7 @@ def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str
     out['TODAY'] = f'{TODAY.day} {MONTH[TODAY.month-1]}'# TODAY#.strftime('%d %B')
     out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
     out["WEEKDAY_TODAY"] = WEEKDAY[TODAY.weekday()]
-    out["WEEKDAY"] = WEEKDAY[current_day.weekday()] if selected_day == 'next_day' else WEEKDAY[TODAY.weekday()]
+    out["WEEKDAY"] = WEEKDAY[get_current_day('next_day').weekday()] if selected_day == 'next_day' else WEEKDAY[get_current_day('today').weekday()]
     out["TOMORROW"] = TOMORROW.strftime('%d %B')
     out["post"] = get_current_staff(request.user)
     out["CH_DAY"] = selected_day
