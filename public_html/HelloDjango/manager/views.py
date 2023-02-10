@@ -649,7 +649,11 @@ def show_today_applications(request, ch_day):
     else:
         today_technic_applications = ApplicationTechnic.objects.filter(app_for_day__date=current_day)
 
-    app_tech_day = ApplicationTechnic.objects.filter(app_for_day__date=current_day)
+    app_tech_day = ApplicationTechnic.objects.filter(
+        Q(app_for_day__date=current_day),
+        Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['submitted'])) |
+        Q(app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['approved']))
+    )
     driver_technic = app_tech_day.values_list('technic_driver__driver__driver__user__last_name',
                                               'technic_driver__technic__name__name').order_by(
         'technic_driver__driver__driver__user__last_name').distinct()
@@ -1056,7 +1060,7 @@ def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str
     out['TODAY'] = f'{TODAY.day} {MONTH[TODAY.month-1]}'# TODAY#.strftime('%d %B')
     out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
     out["WEEKDAY_TODAY"] = WEEKDAY[TODAY.weekday()]
-    out["WEEKDAY"] = WEEKDAY[current_day.weekday()] if selected_day == 'next_day' else WEEKDAY[TODAY.weekday()]
+    out["WEEKDAY"] = WEEKDAY[get_current_day('next_day').weekday()] if selected_day == 'next_day' else WEEKDAY[get_current_day('today').weekday()]
     out["TOMORROW"] = TOMORROW.strftime('%d %B')
     out["post"] = get_current_staff(request.user)
     out["CH_DAY"] = selected_day
