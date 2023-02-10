@@ -33,6 +33,9 @@
 
         {% elif post == 'Механик' %}
             <li><a class="dropdown-item" href="">Механик</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' CH_DAY %}">Табель (Водители)</a></li>
+
+            <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' CH_DAY %}">Табель (Техника)</a></li>
 
 
         {% elif post == 'Снабжение' %}
