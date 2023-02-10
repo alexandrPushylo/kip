@@ -1150,11 +1150,9 @@ def get_var(var, value=False, flag=False):
         return None
 
 
-def set_var(name, value=None, flaf=False):
-    _var, _ = Variable.objects.update_or_create(
-        name=name,
-        value=value,
-        flag=flaf
-    )
+def set_var(name, value=None, flag=False):
+    _var, _ = Variable.objects.get_or_create(name=name)
+    _var.value = value
+    _var.flag = flag
     _var.save()
     return _var
