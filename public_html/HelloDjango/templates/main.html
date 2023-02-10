@@ -170,23 +170,30 @@
 {% block bottom_panel %}
 <div class="input-group d-flex justify-content-center align-items-center">
 
-
-
-
-
-
-
     <a href="{% url 'show_today_applications' CH_DAY  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
 </div>
     {% if post == 'Администратор' %}
     <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" onclick="
+        let f;
+            if($('.driver_panel').is(':hidden')){
+            $('.driver_panel').prop('hidden',false)
+            f='False'
+        }else {
+            $('.driver_panel').prop('hidden',true)
+            f='True'
+        }
 
-    if($('.driver_panel').is(':hidden')){
-        $('.driver_panel').prop('hidden',false)
-    }else {
-        $('.driver_panel').prop('hidden',true)
-    } return false
-"><i class="fa-solid fa-list"></i></button>
+            $.ajax({
+        type: 'POST',
+        mode: 'same-origin',
+        url: '/applications/{{ CH_DAY }}',
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+                panel: f
+        }
+    })
+    return false
+"><i class="fa-solid fa-list"></i> </button>
     {% endif %}
 {% endblock %}
 
