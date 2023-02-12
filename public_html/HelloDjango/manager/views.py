@@ -322,25 +322,14 @@ def tabel_driver_view(request, day):
     driver_today_tabel = DriverTabel.objects.filter(date=current_day)
     out['driver_list'] = driver_today_tabel.order_by('driver__user__last_name')
 
-    if request.method == 'POST':
-        if request.POST.get('id_drv'):
-            _id = request.POST.get('id_drv')
-            _status = request.POST.get('status')
-            _user = DriverTabel.objects.get(id=_id)
-            _user.status = str(_status).capitalize()
-            _user.save()
 
-        # id_driver_list = request.POST.getlist('staff_id')
-        # for n, staff_id in enumerate(id_driver_list,1):
-        #     if request.POST.get(f'staff_status_{n}'):
-        #         st = DriverTabel.objects.get(id=staff_id)
-        #         st.status = True
-        #         st.save()
-        #     else:
-        #         st = DriverTabel.objects.get(id=staff_id)
-        #         st.status = False
-        #         st.save()
-        return HttpResponseRedirect(f'/tabel_driver/{day}')
+    if request.POST.get('id_drv'):
+        _id = request.POST.get('id_drv')
+        _status = request.POST.get('status')
+        _user = DriverTabel.objects.get(id=_id)
+        _user.status = str(_status).capitalize()
+        _user.save()
+
     return render(request, 'tabel_driver.html', out)
 
 
@@ -456,26 +445,7 @@ def Technic_Driver_view(request, day):
             _td.driver = None
         _td.status = str(stat).capitalize()
         _td.save()
-    #
-    # if request.method == 'POST':
-    #     print(request.POST)
-    #     driver_list = request.POST.getlist('select_drv')
-    #     tech_drv_id_list = request.POST.getlist('tech_drv_id')###   tech_status_
-    #
-    #
-    #     for n, _id_td in enumerate(tech_drv_id_list):
-    #         _td = TechnicDriver.objects.get(id=_id_td)
-    #         if driver_list[n]:
-    #             _td.driver = DriverTabel.objects.get(id=driver_list[n])
-    #         else:
-    #             _td.driver = None
-    #         if request.POST.get(f'tech_status_{n+1}'):
-    #             _td.status = True
-    #             _td.save()
-    #         else:
-    #             _td.status = False
-    #             _td.save()
-
+        
     if 'tech_list' in request.path:
         return render(request, 'tech_list.html', out)
     else:
