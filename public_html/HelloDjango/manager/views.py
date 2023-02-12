@@ -445,7 +445,7 @@ def Technic_Driver_view(request, day):
             _td.driver = None
         _td.status = str(stat).capitalize()
         _td.save()
-        
+
     if 'tech_list' in request.path:
         return render(request, 'tech_list.html', out)
     else:
