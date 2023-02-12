@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <div class="container-sm m-3 mx-auto "  >
     <div class="" >
       <div class="card-body row">
@@ -36,7 +35,7 @@
       <td>{{ driver.driver.user.last_name }}</td>
       <td>{{ driver.driver.user.first_name }}</td>
       <td>{{ driver.driver.telephone }}</td>
-      <td hidden><input type="hidden" name="staff_id" value="{{ driver.id }}"></td>
+      <td hidden><input id="drv_id_{{ forloop.counter }}" type="hidden" name="staff_id" value="{{ driver.id }}"></td>
 
     </tr>
     {% endfor %}

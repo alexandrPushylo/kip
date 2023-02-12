@@ -44,7 +44,6 @@ from manager.views import del_staff
 
 from manager.views import tabel_driver_view
 from manager.views import tabel_workday_view
-# from manager.views import tech_list_view
 
 from manager.views import Technic_Driver_view
 
@@ -96,5 +95,4 @@ urlpatterns = [
     path('approv_all_applications/<str:day>', approv_all_applications, name='approv_all_applications'),
     path('submitted_all_applications/<str:day>', submitted_all_applications, name='submitted_all_applications'),
 
-    # path('debug/', include('debug_toolbar.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

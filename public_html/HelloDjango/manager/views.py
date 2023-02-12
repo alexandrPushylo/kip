@@ -93,9 +93,7 @@ def conflict_correction_view(request, day, id_applications):
     vehicle_and_driver = TechnicDriver.objects.filter(date=current_day, driver__isnull=False).values_list(
         'technic__name__name',
         'driver__driver__user__last_name',
-        'id',
-        # 'applicationtechnic__app_for_day__construction_site__address',
-        # 'applicationtechnic__app_for_day__construction_site__foreman__user__last_name'
+        'id'
     )
     out['vehicle_and_driver'] = vehicle_and_driver
 
@@ -244,12 +242,12 @@ def show_staff_view(request):
     staff_list = User.objects.all().order_by('last_name')
     _user_post = []
     for _user in staff_list:
-        _post = get_current_staff(_user)
+        _post = dict_Staff[get_current_post(_user, key=True)]
         _tel = get_current_post(_user)
-        _user_post.append((_user,_post ,_tel))
+        _user_post.append((_user, _post, _tel))
     out['user_post'] = _user_post
     out['staff_list'] = staff_list
-    return render(request,'show_staff.html', out)
+    return render(request, 'show_staff.html', out)
 
 
 def edit_staff_view(request, id_staff):
@@ -318,25 +316,6 @@ def edit_staff_view(request, id_staff):
 
 def tabel_driver_view(request, day):
     out = {}
-
-    ####
-    prepare_driver_table(ch_day)    ####!!!!
-    ###
-    #
-    # driver_list = StaffDriver.objects.all()
-    # if DriverTabel.objects.filter(date=current_day).count() == 0:
-    #     if ch_day == 'next_day':
-    #         try:
-    #             for _drv in DriverTabel.objects.filter(date=TODAY):
-    #                 DriverTabel.objects.create(driver=_drv.driver, date=current_day, status=_drv.status)
-    #         except DriverTabel.DoesNotExist:
-    #             for drv in driver_list:
-    #                 DriverTabel.objects.create(driver=drv, date=current_day)
-    #     else:
-    #         for drv in driver_list:
-    #             DriverTabel.objects.create(driver=drv, date=current_day)
-
-
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
     prepare_driver_table(day)
@@ -402,46 +381,6 @@ def tabel_workday_view(request, ch_week):
 
 def Technic_Driver_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-
-    technic_list = Technic.objects.all()
-
-    if TechnicTabel.objects.filter(date=current_day).count()==0:
-        if ch_day == 'next_day':
-            try:
-                for _tech in TechnicTabel.objects.filter(date=TODAY):
-                    TechnicTabel.objects.create(technic=_tech.technic, date=current_day, status=_tech.status)
-            except TechnicTabel.DoesNotExist:
-                for tech in technic_list:
-                    TechnicTabel.objects.create(technic=tech, date=current_day)
-        else:
-            for tech in technic_list:
-                TechnicTabel.objects.create(technic=tech, date=current_day)
-    technic_today_list = TechnicTabel.objects.filter(date=current_day)
-    out['technic_today_list'] = technic_today_list
-
-    if request.method == 'POST':
-        id_tech_list = request.POST.getlist('tech_id')
-        for n, tech_id in enumerate(id_tech_list,1):
-            if request.POST.get(f'tech_status_{n}'):
-                st = TechnicTabel.objects.get(id=tech_id)
-                st.status = True
-                st.save()
-            else:
-                st = TechnicTabel.objects.get(id=tech_id)
-                st.status = False
-                st.save()
-
-        return HttpResponseRedirect(f'/tabel_technic/{ch_day}')
-    return render(request, 'tabel_technic.html', out)
-
-
-def Technic_Driver_view(request, ch_day):
-    out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-####################### TEST
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
     if DriverTabel.objects.filter(date=current_day, status=True).count() == 0:
@@ -460,15 +399,15 @@ def Technic_Driver_view(request, ch_day):
     if TechnicDriver.objects.filter(date=current_day).count() == 0:
         if get_CH_day(day) == 'next_day':
             for _tech in Technic.objects.all():
-                _drv = tech_drv_list_today.filter(technic=_tech).values_list('driver__driver__user__last_name','status')
-                driver=_drv[0][0]
-                status =_drv[0][1]
+                _drv = tech_drv_list_today.filter(technic=_tech).values_list('driver__driver__user__last_name', 'status')
+                driver = _drv[0][0]
+                status = _drv[0][1]
 
                 c_drv = work_driver_list.filter(driver__user__last_name=driver)
 
-                if c_drv.count()!=0:
+                if c_drv.count() != 0:
                     TechnicDriver.objects.create(technic=_tech,
-                                                 driver=DriverTabel.objects.get(date=current_day,driver__user__last_name = driver),
+                                                 driver=DriverTabel.objects.get(date=current_day, driver__user__last_name = driver),
                                                  date=current_day,
                                                  status=status)
                 else:
@@ -675,15 +614,9 @@ def show_today_applications(request, day):
     app_list = []
     for _drv, _tech in driver_technic:
         desc = app_tech_day.filter(technic_driver__driver__driver__user__last_name=_drv,
-                                   technic_driver__technic__name__name=_tech).values_list(
-            'description',
-            'app_for_day__construction_site__foreman__user__last_name',
-            'app_for_day__construction_site__address',
-            'priority',
-            'id'
-        )
-        if (_drv, _tech,desc) not in app_list:
-            app_list.append((_drv, _tech,desc))
+                                   technic_driver__technic__name__name=_tech).order_by('priority')
+        if (_drv, _tech, desc) not in app_list:
+            app_list.append((_drv, _tech, desc))
     out["today_technic_applications"] = app_list
 
     if request.method == 'POST':

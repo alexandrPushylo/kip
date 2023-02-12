@@ -35,12 +35,12 @@ $('#add_vehicle_btn').click(function () {
 
     const textaria = $('<textarea class="form-control app_description mt-1" name="description_app_list" rows="1">'+descr_app+'</textarea>');
     const div_droup_text_aria = $('<div className="input-group mt-1">');
-    const el_btn = $('<button role="button" class="btn btn-danger col-auto btn_del_io">DEL</button>');
+    const el_btn = $('<button role="button" class="btn btn-danger col-auto btn_del_io"><i class="fa-solid fa-trash"></i></button>');
     const io_dr = $(' <input name="io_driver" type="text" id="io_driver_'+current_id+'" readonly class="form-control" value="'+checked_driver+'">');
     const io_tech = $('<input name="io_technic" type="text" id="io_technic_'+current_id+'" readonly class="form-control" value="'+checked_tech+'">');
     const io_id_td = $('<input name="io_id_tech_driver" type="hidden" value="'+id_tech_driver+'">');
     const div_gr = $('<div class="input-group  tech_driver_list" id="'+current_id+'">');
-    const container = $('<div class="container-fluid mt-4" id="'+current_id+'">');
+    const container = $('<div class=" mt-4" id="'+current_id+'">');
 
     div_droup_text_aria.append(textaria)
     div_gr.append(io_id_td,io_tech, io_dr,el_btn);

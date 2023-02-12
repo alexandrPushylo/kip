@@ -14,13 +14,12 @@
 
       <div><hr>
     <form method="post" id="technic_driver_form" enctype="multipart/form-data">{% csrf_token %}
-        <table class="table table-bordered table-hover">
+           <table class="table table-bordered table-hover">
   <thead>
     <tr>
       <th scope="col">#</th>
       <th scope="col">Работает</th>
       <th scope="col">Название техники</th>
-      <th scope="col">Закрепленный водитель</th>
       <th scope="col">ид. №</th>
       <th scope="col">Водитель</th>
 
@@ -36,8 +35,7 @@
     <td class="row_{{ forloop.counter }}"><input {% if tech_drv.status  %} checked {% endif %}
               id="inp_{{ forloop.counter }}" type="checkbox" name="tech_status_{{ forloop.counter }}"/></td>
 
-    <td class="row_{{ forloop.counter }}">{{ tech_drv.technic.name }} </td>
-    <td class="row_{{ forloop.counter }}">{{ tech_drv.technic.attached_driver.user.last_name}} {{ tech_drv.technic.attached_driver.user.first_name}} </td>
+    <td class="row_{{ forloop.counter }}">{{ tech_drv.technic.name }} ({{ tech_drv.technic.attached_driver.user.last_name}})</td>
     <td class="row_{{ forloop.counter }}">[{{ tech_drv.technic.id_information }}]</td>
 
     <td><input type="hidden" id="io_drv_{{forloop.counter}}" value="{{ tech_drv.driver.id }}"/>
@@ -48,7 +46,7 @@
               {% endfor %}
             </select>
     </td>
-    <td hidden><input type="hidden" name="tech_drv_id" value="{{ tech_drv.id }}"></td>
+    <td hidden><input id="id_tech_drv_{{ forloop.counter }}" type="hidden" name="tech_drv_id" value="{{ tech_drv.id }}"></td>
 
     </tr>
     {% endfor %}
@@ -75,3 +73,7 @@
   <input form="technic_driver_form" class="btn btn-success  col-auto " type="submit" value="Сохранить">
 </div>
 {% endblock %}
+<script type="text/javascript">
+
+
+</script>

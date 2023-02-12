@@ -37,30 +37,25 @@
                         {% for d in v.2 %}
 
                         <div class=" conteiner-fluid form-floating row mt-1">
-                        <input type="hidden" name="prior_id" value="{{ d.4 }}"/>
+                        <input type="hidden" name="prior_id" value="{{ d.id }}"/>
                             <div class="input-group form-floating p-0">
                                 {% if post == 'admin' %}
 
                                 <span class="input-group-text">
-                                    <input type="number" id="priority_{{ d.4 }}" name="priority"
-                               class="  col-auto  " value="{{ d.3 }}" style="max-width: 50px; margin-left: -5px;"/>
+                                <input type="number" min="1" id="priority_{{ d.id }}" name="priority"
+                               class="priority  col-auto  " value="{{ d.priority }}" style="max-width: 50px; margin-left: -5px;"/>
                                 </span>
+
                                 {% endif %}
 
-                                <textarea {% if post != 'Администратор' %} readonly {% endif %} class="form-control app_description" aria-label="With textarea" id="floatingInputValue" name="descr">{{ d.0 }}</textarea>
-                                <label for="floatingInputValue" class="fw-bold " style="color: black; margin-left: 70px; margin-top: -10px">{{ d.1 }} ({{ d.2 }})</label>
+                                <textarea {% if post != 'admin' %} readonly {% endif %} class="form-control app_description" aria-label="With textarea" id="floatingInputValue" name="descr">{{ d.description }}</textarea>
+                                <label for="floatingInputValue" class="fw-bold text-nowrap" style="color: black; margin-left: 60px; margin-top: -10px">{{ d.app_for_day.construction_site.foreman.user.last_name }} ({{ d.app_for_day.construction_site.address }})</label>
                             </div>
-
-
                         </div>
-
-
                       {% endfor %}
-
                 </div>
-
         </ul>
-          </div>
+      </div>
     </div>
       {% endfor %}
       </form>
@@ -90,5 +85,5 @@
 
 
 {% block script %}{% load static %}
-    <script src="{% static "admin/js/scripts/show_info_application.js" %}"></script>
+    <script src="{% static "admin/js/scripts/today_application.js" %}"></script>
 {% endblock %}
