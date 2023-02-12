@@ -330,6 +330,19 @@ def tabel_driver_view(request, day):
         _user.status = str(_status).capitalize()
         _user.save()
 
+    if request.POST.getlist('staff_id'):
+        id_driver_list = request.POST.getlist('staff_id')
+        for n, staff_id in enumerate(id_driver_list, 1):
+            if request.POST.get(f'staff_status_{n}'):
+                st = DriverTabel.objects.get(id=staff_id)
+                st.status = True
+                st.save()
+            else:
+                st = DriverTabel.objects.get(id=staff_id)
+                st.status = False
+                st.save()
+        return HttpResponseRedirect(f'/tabel_driver/{day}')
+
     return render(request, 'tabel_driver.html', out)
 
 
@@ -358,12 +371,26 @@ def tabel_workday_view(request, ch_week):
     for _day in range(7):
         out['week'].append((WorkDayTabel.objects.get(date=current_week[_day]), WEEKDAY[_day]))
 
-    if request.POST.get('day_id'):
-        _id = request.POST.get('day_id')
+    if request.POST.get('id_day'):
+        _id = request.POST.get('id_day')
         _status = request.POST.get('status')
         _day = WorkDayTabel.objects.get(id=_id)
         _day.status = str(_status).capitalize()
         _day.save()
+
+    if request.POST.getlist('day_id'):
+        id_day_list = request.POST.getlist('day_id')
+        for n, day_id in enumerate(id_day_list, 1):
+
+            if request.POST.get(f'day_status_{n}'):
+                st = WorkDayTabel.objects.get(id=day_id)
+                st.status = True
+                st.save()
+            else:
+                st = WorkDayTabel.objects.get(id=day_id)
+                st.status = False
+                st.save()
+        return HttpResponseRedirect(f'/tabel_workday/{ch_week}')
 
     return render(request, 'tabel_workday.html', out)
 
@@ -438,6 +465,23 @@ def Technic_Driver_view(request, day):
             _td.driver = None
         _td.status = str(stat).capitalize()
         _td.save()
+
+    if request.POST.getlist('tech_drv_id'):
+        driver_list = request.POST.getlist('select_drv')
+        tech_drv_id_list = request.POST.getlist('tech_drv_id')  ###   tech_status_
+
+        for n, _id_td in enumerate(tech_drv_id_list):
+            _td = TechnicDriver.objects.get(id=_id_td)
+            if driver_list[n]:
+                _td.driver = DriverTabel.objects.get(id=driver_list[n])
+            else:
+                _td.driver = None
+            if request.POST.get(f'tech_status_{n + 1}'):
+                _td.status = True
+                _td.save()
+            else:
+                _td.status = False
+                _td.save()
 
     if 'tech_list' in request.path:
         return render(request, 'tech_list.html', out)

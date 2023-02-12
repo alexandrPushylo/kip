@@ -21,7 +21,7 @@ function sent(i) {
         url: pathname,
         data:{
             csrfmiddlewaretoken: csrf,
-                day_id: id_day,
+                id_day: id_day,
                 status: status
             }
         })
