@@ -358,20 +358,13 @@ def tabel_workday_view(request, ch_week):
     for _day in range(7):
         out['week'].append((WorkDayTabel.objects.get(date=current_week[_day]), WEEKDAY[_day]))
 
-    if request.method == 'POST':
-        id_day_list = request.POST.getlist('day_id')
-        for n, day_id in enumerate(id_day_list, 1):
+    if request.POST.get('day_id'):
+        _id = request.POST.get('day_id')
+        _status = request.POST.get('status')
+        _day = WorkDayTabel.objects.get(id=_id)
+        _day.status = str(_status).capitalize()
+        _day.save()
 
-            if request.POST.get(f'day_status_{n}'):
-                st = WorkDayTabel.objects.get(id=day_id)
-                st.status = True
-                st.save()
-            else:
-                st = WorkDayTabel.objects.get(id=day_id)
-                st.status = False
-                st.save()
-
-        return HttpResponseRedirect(f'/tabel_workday/{ch_week}')
     return render(request, 'tabel_workday.html', out)
 
 

@@ -26,19 +26,16 @@
   </thead>
   <tbody>{% for day in week %}
     <tr id="row_{{ forloop.counter }}" class="day_row" >
-{#      <th scope="row">{{ forloop.counter }}</th>#}
       <td><input {% if day.0.status  %} checked {% endif %}
               id="inp_{{ forloop.counter }}" type="checkbox" name="day_status_{{ forloop.counter }}"/></td>
       <td>{{ day.0.date }}</td>
       <td>{{ day.1 }}</td>
-{#      <td>{{ driver.driver.telephone }}</td>#}
-      <td hidden><input type="hidden" name="day_id" value="{{ day.0.id }}"></td>
+      <td hidden><input id="day_id_{{ forloop.counter }}" type="hidden" name="day_id" value="{{ day.0.id }}"></td>
 
     </tr>
     {% endfor %}
   </tbody>
 </table>
-{#    <input form="workday_form" class="btn btn-primary  col-auto " type="submit" value="Сохранить">#}
     </form>
 
       </div>
@@ -54,12 +51,9 @@
 {% endblock %}
 
 {% block bottom_panel %}
-
-{#    <a href="/signup/" class="btn btn-outline-secondary active col-auto m-1" aria-current="page">Добавить сотрудника</a>#}
-
     <div class="input-group d-flex justify-content-center align-items-center">
   <a href="{% url 'start_page'  %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
 
-  <input form="workday_form" class="btn btn-success  col-auto " type="submit" value="Сохранить">
+{#  <input form="workday_form" class="btn btn-success  col-auto " type="submit" value="Сохранить">#}
 </div>
 {% endblock %}
