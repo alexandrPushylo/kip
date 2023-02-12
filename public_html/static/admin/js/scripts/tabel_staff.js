@@ -1,6 +1,6 @@
 const count_row = $('.user_row').length;
 const csrf = $('input[name="csrfmiddlewaretoken"]').val();
-const pathname = window.location.pathname
+const pathname = window.location.pathname;
 
 for (let i=1;i<=count_row;i++) {
 
