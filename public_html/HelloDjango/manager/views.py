@@ -1024,6 +1024,7 @@ def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str
 
 
 def success_application(request, id_application):
+    """изменение статуса заявки"""
     current_application = ApplicationToday.objects.get(id=id_application)
     if is_admin(request.user):
         current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
