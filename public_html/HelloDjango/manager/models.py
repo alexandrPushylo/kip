@@ -79,13 +79,6 @@ class TechnicName(models.Model):
         verbose_name = "Название группы техники"
         verbose_name_plural = "Название групп техники"
 
-class TechnicStatus(models.Model):
-    status = models.CharField(max_length=255, verbose_name="Статус техники")
-    def __str__(self): return self.status
-    class Meta:
-        verbose_name = "Статус техники"
-        verbose_name_plural = "Статус техники"
-
 class Technic(models.Model):
     name = models.ForeignKey(TechnicName, on_delete=models.SET_NULL, null=True, verbose_name="Название техники")
     id_information = models.CharField(max_length=256, null=True, blank=True, verbose_name="Идентификационная информация")

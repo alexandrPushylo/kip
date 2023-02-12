@@ -9,7 +9,7 @@ from manager.models import ApplicationTechnic, ApplicationStatus, ApplicationTod
 from manager.models import ConstructionSite, ConstructionSiteStatus
 from manager.models import TechnicDriver, DriverTabel
 from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply
-from manager.models import Technic, TechnicStatus, TechnicName, TechnicType
+from manager.models import Technic, TechnicName, TechnicType
 from manager.models import WorkDayTabel
 from manager.models import Variable
 
