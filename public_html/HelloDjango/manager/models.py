@@ -62,14 +62,6 @@ class StaffSupply(models.Model):
         verbose_name_plural = "Сотрудники снабжение"
 
 
-class Staff(models.Model):###del
-    staff = models.CharField(max_length=128, verbose_name='Статус')
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
-    def __abs__(self): return self.staff
-    class Meta:
-        verbose_name = 'Статус'
-        verbose_name_plural = 'Статусы'
-
 #------------------------------STAFF-----------------------------------------------------------------------------------
 #------------------------------TECHNIC----------------------------------------------------------------------------------
 
@@ -106,14 +98,6 @@ class Technic(models.Model):
         verbose_name_plural = "Техника"
 
 
-class TechnicTabel(models.Model):#TODO:dell
-    technic = models.ForeignKey(Technic, on_delete=models.CASCADE, verbose_name='Транспортное средство')
-    status = models.BooleanField(default=True, verbose_name="Статус техники")
-    date = models.DateField(verbose_name="Дата", null=True)
-    def __str__(self): return f"{self.technic} [{self.date}] - {self.status}"
-    class Meta:
-        verbose_name = "Табель техники"
-        verbose_name_plural = "Табеля техники"
 
 #------------------------------TECHNIC----------------------------------------------------------------------------------
 

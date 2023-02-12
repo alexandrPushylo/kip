@@ -70,7 +70,6 @@ urlpatterns = [
 
     path('tabel_driver/<str:ch_day>', tabel_driver_view, name='tabel_driver'),
     path('tabel_workday/<str:ch_week>', tabel_workday_view, name='tabel_workday'),
-    # path('tabel_technic/<str:ch_day>', tabel_technic_view, name='tabel_technic'),################
     path('technic_driver/<str:ch_day>', Technic_Driver_view, name='technic_driver'),
     path('tech_list/<str:ch_day>', Technic_Driver_view, name='tech_list'),
 
