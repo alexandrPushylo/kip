@@ -94,5 +94,6 @@ urlpatterns = [
 
     path('approv_all_applications/<str:day>', approv_all_applications, name='approv_all_applications'),
     path('submitted_all_applications/<str:day>', submitted_all_applications, name='submitted_all_applications'),
+    re_path(r'applications/.*', show_start_page)
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

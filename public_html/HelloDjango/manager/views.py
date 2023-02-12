@@ -504,6 +504,8 @@ def show_applications_view(request, day, id_user=None):
         return HttpResponseRedirect('/')
 
     current_day = convert_str_to_date(day)
+    if not current_day:
+        return HttpResponseRedirect('/')
     out = {"constr_site_list": []}
 
     if id_user:
