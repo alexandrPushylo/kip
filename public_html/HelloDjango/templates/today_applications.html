@@ -39,7 +39,8 @@
                         <div class=" conteiner-fluid form-floating row mt-1">
                         <input type="hidden" name="prior_id" value="{{ d.4 }}"/>
                             <div class="input-group form-floating p-0">
-                                {% if post == 'Администратор' %}
+                                {% if post == 'admin' %}
+
                                 <span class="input-group-text">
                                     <input type="number" id="priority_{{ d.4 }}" name="priority"
                                class="  col-auto  " value="{{ d.3 }}" style="max-width: 50px; margin-left: -5px;"/>
@@ -77,7 +78,7 @@
 <div class="input-group d-flex justify-content-center align-items-center">
 
 
-    {% if post == 'Администратор' %}
+    {% if post == 'admin' %}
     <a href="{% url 'application_list' cw_day %}" class="btn btn-primary col-auto  m-1" aria-current="page">Назад</a>
     <input form="priority_form" class="btn btn-success  col-auto   m-1" type="submit" value="Сохранить изменения">
         {% else %}
