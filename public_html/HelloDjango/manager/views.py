@@ -916,7 +916,7 @@ def approv_all_applications(request, day):
         for app in current_applications:
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
             app.save()
-    return HttpResponseRedirect(f'/applications/{ch_day}')
+    return HttpResponseRedirect(f'/applications/{day}')
 
 
 def submitted_all_applications(request, day):
@@ -1107,10 +1107,10 @@ def get_current_day(selected_day: str):
 
 
 def get_CH_day(day):
-    if str(day) == str(TODAY):
-        return 'current_day'
-    else:
+    if str(day) == str(get_current_day('next_day')):
         return 'next_day'
+    else:
+        return 'last_day'
 
 
 def prepare_driver_table(day):
