@@ -796,6 +796,8 @@ def del_staff(request, id_staff):
     user = User.objects.get(id=id_staff)
     get_current_post(user).delete()
     user.delete()
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     return HttpResponseRedirect('/show_staff/')
 
 
