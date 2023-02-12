@@ -4,14 +4,14 @@
 
 <div class="container mt-3">
         <h3 class="text-center m-0">
-            {% if CH_DAY == 'next_day' %}
-                <a href="{% url 'application_for_driver' 'current_day' current_user.id %}" class="btn " aria-current="page">
+            {% if cw_day == nw_day %}
+                <a href="{% url 'application_for_driver' lw_day current_user.id %}" class="btn " aria-current="page">
                 Сегодня <
                 </a>
                 {{ DAY }}
             {% else %}
                 {{ DAY }}
-                <a href="{% url 'application_for_driver' 'next_day' current_user.id %}" class="btn fw-light" aria-current="page">
+                <a href="{% url 'application_for_driver' nw_day current_user.id %}" class="btn fw-light" aria-current="page">
                 > Завтра
                 </a>
             {% endif %}
@@ -52,10 +52,10 @@
 {% block bottom_panel %}
 <div class="input-group d-flex justify-content-center align-items-center">
 {% if post == 'Администратор' %}
-    <a href="{% url 'driver_app_list' CH_DAY  %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
+    <a href="{% url 'driver_app_list' cw_day  %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
 {% endif %}
 
-<a href="{% url 'show_today_applications' CH_DAY  %}" class="btn btn-outline-secondary active m-1" aria-current="page">Все заявки на {{ DAY }}</a>
+<a href="{% url 'show_today_applications' cw_day  %}" class="btn btn-outline-secondary active m-1" aria-current="page">Все заявки на {{ DAY }}</a>
 </div>
 
 

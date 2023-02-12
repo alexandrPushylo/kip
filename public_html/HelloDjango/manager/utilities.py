@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import locale
 from random import choice
 #---------------------------------------------------
@@ -36,4 +36,12 @@ def get_week(c_date, week=None):
     for n in range(7):
         yield curr_date
         curr_date += ONE_DAY
+
+def convert_str_to_date(str_date: str) -> date:
+    """конвертация str в datetime.date"""
+    try:
+        _day = datetime.strptime(str_date, '%Y-%m-%d').date()
+        return _day
+    except:
+        print('Error date')
 

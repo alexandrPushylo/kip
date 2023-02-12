@@ -6,10 +6,10 @@
     <div class="" >
       <div class="card-body row">
         <p class="card-text col"> <b class="fs-5">Водители <br>{{ DAY }}</b> </p>
-        {% if CH_DAY == 'next_day' %}
-      <a href="{% url 'tabel_driver' 'today' %}" class=" col-auto btn btn-outline-secondary  position-absolute mt-4" style="margin-left: 200px;" aria-current="page">Список на сегодня</a>
+        {% if cw_day == nw_day %}
+      <a href="{% url 'tabel_driver' lw_day %}" class=" col-auto btn btn-outline-secondary  position-absolute mt-4" style="margin-left: 200px;" aria-current="page">Список на сегодня</a>
         {% else %}
-          <a href="{% url 'tabel_driver' 'next_day' %}" class="col-auto btn btn-outline-secondary  position-absolute mt-4 " style="margin-left: 200px;" aria-current="page">Список на следующий день</a>
+          <a href="{% url 'tabel_driver' nw_day %}" class="col-auto btn btn-outline-secondary  position-absolute mt-4 " style="margin-left: 200px;" aria-current="page">Список на следующий день</a>
       {% endif %}
 
 

@@ -31,6 +31,7 @@ from manager.utilities import get_difference
 from manager.utilities import get_week
 from manager.utilities import timedelta
 from manager.utilities import choice as rand_choice
+from manager.utilities import convert_str_to_date
 # ----------------
 
 # ----------PREPARE--------------
@@ -41,10 +42,10 @@ from manager.utilities import choice as rand_choice
 # ------FUNCTION VIEW----------------------
 
 
-def foreman_app_list_view(request, ch_day):
+def foreman_app_list_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     foreman_list = StaffForeman.objects.filter()
     app_list = []
     for _fman in foreman_list:
@@ -57,11 +58,10 @@ def foreman_app_list_view(request, ch_day):
     return render(request, 'foreman_app_list.html', out)
 
 
-def driver_app_list_view(request, ch_day):
+def driver_app_list_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-    current_day = get_current_day(ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     current_app_tech = ApplicationTechnic.objects.filter(
         technic_driver__status=True,
         app_for_day__date=current_day,
@@ -78,13 +78,13 @@ def driver_app_list_view(request, ch_day):
     return render(request, 'driver_app_list.html', out)
 
 
-def conflict_correction_view(request, ch_day, id_applications):
+def conflict_correction_view(request, day, id_applications):
     out = {}
     id_application_list = id_applications.split(',')[:-1]
     tech_app_list = ApplicationTechnic.objects.filter(id__in=id_application_list)
     current_user = request.user
-    get_prepare_data(out, request, selected_day=ch_day)
-    current_day = get_current_day(ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     out["date_of_target"] = current_day
     out['tech_app_list'] = tech_app_list.order_by('technic_driver__driver__driver__user__last_name')
     out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day, 1)
@@ -115,14 +115,14 @@ def conflict_correction_view(request, ch_day, id_applications):
             else:
                 app.delete()
 
-        return HttpResponseRedirect(f'/conflict_resolution/{ch_day}')
+        return HttpResponseRedirect(f'/conflict_resolution/{day}')
     return render(request, 'conflict_correction.html', out)
 
 
 def conflict_resolution_view(request, ch_day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     out["date_of_target"] = current_day
 
     conflict_list = get_conflicts_vehicles_list(current_day)
@@ -316,10 +316,8 @@ def edit_staff_view(request, id_staff):
 # TABEL----------------------------------------------------------------------------------------TABEL--------------------
 
 
-def tabel_driver_view(request, ch_day):
+def tabel_driver_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
 
     ####
     prepare_driver_table(ch_day)    ####!!!!
@@ -339,6 +337,9 @@ def tabel_driver_view(request, ch_day):
     #             DriverTabel.objects.create(driver=drv, date=current_day)
 
 
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
+    prepare_driver_table(day)
     driver_today_tabel = DriverTabel.objects.filter(date=current_day)
     out['driver_list'] = driver_today_tabel.order_by('driver__user__last_name')
 
@@ -399,7 +400,7 @@ def tabel_workday_view(request, ch_week):
     return render(request, 'tabel_workday.html', out)
 
 
-def tabel_technic_view(request, ch_day):#TODO: dell
+def Technic_Driver_view(request, day):
     out = {}
     current_day = get_current_day(ch_day)
     get_prepare_data(out, request, current_day, selected_day=ch_day)
@@ -441,8 +442,10 @@ def Technic_Driver_view(request, ch_day):
     current_day = get_current_day(ch_day)
     get_prepare_data(out, request, current_day, selected_day=ch_day)
 ####################### TEST
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     if DriverTabel.objects.filter(date=current_day, status=True).count() == 0:
-        prepare_driver_table(ch_day)
+        prepare_driver_table(day)
 
 
 
@@ -454,8 +457,8 @@ def Technic_Driver_view(request, ch_day):
 
     tech_drv_list_today = TechnicDriver.objects.filter(date=TODAY)
 
-    if TechnicDriver.objects.filter(date=current_day).count()==0:
-        if ch_day == 'next_day':
+    if TechnicDriver.objects.filter(date=current_day).count() == 0:
+        if get_CH_day(day) == 'next_day':
             for _tech in Technic.objects.all():
                 _drv = tech_drv_list_today.filter(technic=_tech).values_list('driver__driver__user__last_name','status')
                 driver=_drv[0][0]
@@ -476,7 +479,7 @@ def Technic_Driver_view(request, ch_day):
                                                  status=status)
         else:
             for tech in Technic.objects.all():
-                TechnicDriver.objects.create(technic=tech,date=TODAY,status=True)
+                TechnicDriver.objects.create(technic=tech, date=TODAY, status=True)
     else:
         technic_driver_list = TechnicDriver.objects.filter(date=current_day)
 
@@ -530,10 +533,11 @@ def clear_application_view(request, id_application):
     return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
 
 
-def show_applications_view(request, ch_day, id_user=None):
+def show_applications_view(request, day, id_user=None):
     if request.user.is_anonymous:
         return HttpResponseRedirect('/')
-    current_day = get_current_day(ch_day)
+
+    current_day = convert_str_to_date(day)
     out = {"constr_site_list": []}
 
     if id_user:
@@ -541,7 +545,8 @@ def show_applications_view(request, ch_day, id_user=None):
         out['current_user'] = current_user
     else:
         current_user = request.user
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+
+    get_prepare_data(out, request, current_day)
 
     construction_site_list = ConstructionSite.objects.filter(status=ConstructionSiteStatus.objects.get(status=STATUS_CS['opened']))
 
@@ -618,15 +623,16 @@ def show_applications_view(request, ch_day, id_user=None):
         return render(request, "main.html", out)
 
 
-def show_application_for_driver(request, ch_day, id_user=None):
-    current_day = get_current_day(ch_day)
+def show_application_for_driver(request, day, id_user=None):
     out = {}
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     if id_user:
         current_user = User.objects.get(id=id_user)
     else:
         current_user = User.objects.get(username=request.user)
     out["current_user"] = current_user
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+
     out["date_of_target"] = current_day.strftime('%d %B')
 
     applications = ApplicationTechnic.objects.filter(app_for_day__date=current_day,
@@ -640,24 +646,10 @@ def show_application_for_driver(request, ch_day, id_user=None):
         return render(request, 'extend/admin_app_for_driver.html', out)
     return render(request, 'applications_for_driver.html', out)
 
-
-# def tech_list_view(request, ch_day):
-#     out = {}
-#     current_day = get_current_day(ch_day)
-#     get_prepare_data(out, request, current_day, ch_day)
-#
-#     tech_drv_list = TechnicDriver.objects.filter(date=current_day)
-#
-#     out['tech_drv_list'] = tech_drv_list
-#     if 'tech_list' in request.path:
-#         print(request.path)
-#     return render(request, 'tech_list.html', out)
-
-
-def show_today_applications(request, ch_day):
-    current_day = get_current_day(ch_day)
+def show_today_applications(request, day):
+    current_day = convert_str_to_date(day)
     out = {}
-    get_prepare_data(out, request, selected_day=ch_day)
+    get_prepare_data(out, request, current_day)
 
     out["date_of_target"] = current_day
     if is_admin(request.user):
@@ -704,7 +696,7 @@ def show_today_applications(request, ch_day):
             app.priority = pr
             app.description = desc
             app.save()
-        return HttpResponseRedirect(f'/today_app/{ch_day}')
+        return HttpResponseRedirect(f'/today_app/{day}')
     return render(request, "today_applications.html", out)
 
 
@@ -916,9 +908,9 @@ def logout_view(request):
 
 
 # ------------------SUPPORT FUNCTION-------------------------------
-def approv_all_applications(request, ch_day):
+def approv_all_applications(request, day):
     if is_admin(request.user):
-        current_day = get_current_day(ch_day)
+        current_day = convert_str_to_date(day)
         current_applications = ApplicationToday.objects.filter(
             status=ApplicationStatus.objects.get(status=STATUS_AP['submitted']), date=current_day)
         for app in current_applications:
@@ -927,15 +919,15 @@ def approv_all_applications(request, ch_day):
     return HttpResponseRedirect(f'/applications/{ch_day}')
 
 
-def submitted_all_applications(request, ch_day):
+def submitted_all_applications(request, day):
     if is_foreman(request.user) or is_master(request.user) or is_employee_supply(request.user):
-        current_day = get_current_day(ch_day)
+        current_day = convert_str_to_date(day)
         current_applications = ApplicationToday.objects.filter(
             status=ApplicationStatus.objects.get(status=STATUS_AP['saved']), date=current_day)
         for app in current_applications:
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
             app.save()
-    return HttpResponseRedirect(f'/applications/{ch_day}')
+    return HttpResponseRedirect(f'/applications/{day}')
 
 
 def get_work_TD_list(current_day, c_in=1, F_saved=False):
@@ -1065,19 +1057,19 @@ def show_start_page(request):
         return HttpResponseRedirect("signin/")
     else:
         if is_admin(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_foreman(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_master(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_driver(request.user):
-            return HttpResponseRedirect(f"personal_application/today/{request.user.id}")
+            return HttpResponseRedirect(f"personal_application/{get_current_day('last_day')}/{request.user.id}")
         elif is_mechanic(request.user):
-            return HttpResponseRedirect("tech_list/today")
+            return HttpResponseRedirect(f"tech_list/{get_current_day('last_day')}")
         elif is_employee_supply(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         else:
-            return HttpResponseRedirect("/today_app/today")
+            return HttpResponseRedirect(f"/today_app/{get_current_day('last_day')}")
 
 
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
@@ -1121,8 +1113,9 @@ def get_CH_day(day):
         return 'next_day'
 
 
-def prepare_driver_table(ch_day):
-    current_day = get_current_day(ch_day)
+def prepare_driver_table(day):
+    current_day = day
+    ch_day = get_CH_day(day)
     driver_list = StaffDriver.objects.all()
     if DriverTabel.objects.filter(date=current_day).count() == 0:
         if ch_day == 'next_day':

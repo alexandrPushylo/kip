@@ -10,15 +10,15 @@
             <li><a class="dropdown-item fw-bolder" href="{% url 'show_staff' %}">Персонал</a></li>
 
             <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_workday' 'currweek' %}">Табель (Рабочие дни)</a></li>
-            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' CH_DAY %}">Табель (Водители)</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' cw_day %}">Табель (Водители)</a></li>
 
-            <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' CH_DAY %}">Табель (Техника)</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' cw_day %}">Табель (Техника)</a></li>
 
 
             <li><a class="dropdown-item fw-bolder" href="{% url 'construction_sites' %}">Объекты</a></li>
             <hr>
-            <li><a class="dropdown-item fw-bolder" href="{% url 'driver_app_list' CH_DAY %}">Водители</a></li>
-            <li><a class="dropdown-item fw-bolder" href="{% url 'foreman_app_list' CH_DAY %}">Статус заявок</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'driver_app_list' cw_day %}">Водители</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'foreman_app_list' cw_day %}">Статус заявок</a></li>
             {% if user.username == 'admin' %}
                 
             {% endif %}
@@ -33,9 +33,9 @@
 
         {% elif post == 'Механик' %}
             <li><a class="dropdown-item" href="">Механик</a></li>
-            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' CH_DAY %}">Табель (Водители)</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' cw_day %}">Табель (Водители)</a></li>
 
-            <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' CH_DAY %}">Табель (Техника)</a></li>
+            <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' cw_day %}">Табель (Техника)</a></li>
 
 
         {% elif post == 'Снабжение' %}

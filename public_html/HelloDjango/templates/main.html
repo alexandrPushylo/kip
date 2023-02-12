@@ -8,7 +8,7 @@
     {% else %}{% endif %}
 {% elif post == 'Прораб' or 'Мастер' or 'Снабжение' %}
     {% if saved_app_list %}
-    <a href="{% url 'submitted_all_applications' CH_DAY %}"  class="btn btn-sm btn-warning  " aria-current="page">Подать все заявки</a>
+    <a href="{% url 'submitted_all_applications' cw_day %}"  class="btn btn-sm btn-warning  " aria-current="page">Подать все заявки</a>
         {% endif %}
 {% endif %}
 {% endblock %}
@@ -18,14 +18,14 @@
     {% block choosedate %}
     <div class="container mt-3">
         <h3 class="text-center m-0">
-            {% if CH_DAY == 'next_day' %}
-                <a href="{% url 'application_list' 'current_day' %}" class="btn " aria-current="page">
+            {% if cw_day == nw_day %}
+                <a href="{% url 'application_list' lw_day %}" class="btn " aria-current="page">
                 Сегодня <
                 </a>
                 {{ DAY }}
             {% else %}
                 {{ DAY }}
-                <a href="{% url 'application_list' 'next_day' %}" class="btn fw-light" aria-current="page">
+                <a href="{% url 'application_list' nw_day %}" class="btn fw-light" aria-current="page">
                 > Следующий рабочий день
                 </a>
             {% endif %}
@@ -170,7 +170,7 @@
 {% block bottom_panel %}
 <div class="input-group d-flex justify-content-center align-items-center">
 
-    <a href="{% url 'show_today_applications' CH_DAY  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
+    <a href="{% url 'show_today_applications' cw_day  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
 </div>
     {% if post == 'Администратор' %}
     <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" onclick="
@@ -186,7 +186,7 @@
             $.ajax({
         type: 'POST',
         mode: 'same-origin',
-        url: '/applications/{{ CH_DAY }}',
+        url: '/applications/{{ cw_day }}',
         data: {
             csrfmiddlewaretoken: '{{ csrf_token }}',
                 panel: f
