@@ -1034,16 +1034,19 @@ def success_application(request, id_application):
 
 
 def get_current_day(selected_day: str):
+    """получить (следующий, текущий, прошлый) рабочий день """
     if selected_day == 'next_day':
         for n in range(1, 14):
             _day = WorkDayTabel.objects.get(date=TODAY+timedelta(n))
             if _day.status:
                 return _day.date
-    else:
+    elif selected_day == 'last_day':
         for n in range(14):
             _day = WorkDayTabel.objects.get(date=TODAY - timedelta(n))
             if _day.status:
                 return _day.date
+    else:
+        return TODAY
 
 
 def get_CH_day(day):
