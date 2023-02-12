@@ -261,7 +261,7 @@ def edit_staff_view(request, id_staff):
     foreman_list = StaffForeman.objects.values_list('user_id', 'user__last_name', 'user__first_name')
     out['foreman_list'] = foreman_list
     current_post = get_current_post(current_user, key=True)
-    out['current_post'] = get_current_post(current_user)
+    out['current_post'] = get_current_post(current_user, key=True)
     if is_master(current_user):
         out['current_foreman'] = StaffMaster.objects.get(user=current_user).foreman.user.id
 
