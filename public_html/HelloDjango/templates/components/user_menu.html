@@ -5,7 +5,7 @@
     <ul class="dropdown-menu dropdown-menu-end dropdown-menu">
 
         {% if post == 'admin' %}
-            <li><a class="dropdown-item" href="">Администратор</a></li>
+            <li><a class="dropdown-item" href="/edit_staff/{{ user.id }}">Профиль</a></li>
             <hr>
             <li><a class="dropdown-item fw-bolder" href="{% url 'show_staff' %}">Персонал</a></li>
 
@@ -27,23 +27,23 @@
 
 
         {% elif post == 'foreman' or post == 'master' %}
-            <li><a class="dropdown-item" href="">Прораб</a></li>
+            <li><a class="dropdown-item" href="/edit_staff/{{ user.id }}">Профиль</a></li>
             <hr>
             <li><a class="dropdown-item fw-bolder" href="{% url 'construction_sites' %}">Объекты</a></li>
 
         {% elif post == 'mechanic' %}
-            <li><a class="dropdown-item" href="">Механик</a></li>
+            <li><a class="dropdown-item" href="/edit_staff/{{ user.id }}">Профиль</a></li>
             <li><a class="dropdown-item fw-bolder" href="{% url 'tabel_driver' cw_day %}">Табель (Водители)</a></li>
 
             <li><a class="dropdown-item fw-bolder" href="{% url 'technic_driver' cw_day %}">Табель (Техника)</a></li>
 
 
         {% elif post == 'employee_supply' %}
-            <li><a class="dropdown-item" href="">Снабжение</a></li>
+            <li><a class="dropdown-item" href="/edit_staff/{{ user.id }}">Профиль</a></li>
 
 
         {% elif post == 'driver' %}
-            <li><a class="dropdown-item" href="">Водитель</a></li>
+            <li><a class="dropdown-item" href="/edit_staff/{{ user.id }}">Профиль</a></li>
 
         {% endif %}
 
