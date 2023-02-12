@@ -1,4 +1,7 @@
 const count_row = $('.tech_drv_row').length;
+const csrf = $('input[name="csrfmiddlewaretoken"]').val();
+const pathname = window.location.pathname
+
 
 for (let i=1;i<=count_row;i++) {
     const io_drv = '#io_drv_'+i;
@@ -12,5 +15,29 @@ for (let i=1;i<=count_row;i++) {
         } else {
 	        $('#inp_'+i).prop('checked', true);
         }
+        sent(i);
+
     })
+    $('#select_drv_'+i).change(function () {
+        sent(i)
+    });
+}
+
+
+function sent(i) {
+        let id_drv = $('#select_drv_'+i).val();
+        let status = $('#inp_'+i).is(':checked');
+        let tech = $('#id_tech_drv_'+i).val()
+
+        $.ajax({
+        type: 'POST',
+        mode: 'same-origin',
+        url: pathname,
+        data:{
+            csrfmiddlewaretoken: csrf,
+                id_drv: id_drv,
+                status: status,
+                tech: tech
+            }
+        })
 }

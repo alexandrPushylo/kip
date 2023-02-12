@@ -44,7 +44,6 @@ from manager.views import del_staff
 
 from manager.views import tabel_driver_view
 from manager.views import tabel_workday_view
-# from manager.views import tech_list_view
 
 from manager.views import Technic_Driver_view
 
@@ -54,8 +53,8 @@ from manager.views import foreman_app_list_view
 
 urlpatterns = [
     path('', show_start_page, name='start_page'),
-    path('applications/<str:ch_day>', show_applications_view, name='application_list'),
-    path('applications/<int:id_user>/<str:ch_day>', show_applications_view, name='application_list'),
+    path('applications/<str:day>', show_applications_view, name='application_list'),
+    path('applications/<int:id_user>/<str:day>', show_applications_view, name='application_list'),
 
     path('construction_sites/', show_construction_sites_view, name='construction_sites'),
     path('edit_construction_sites/<int:id_construction_sites>', edit_construction_sites_view, name='edit_construction_sites'),
@@ -68,34 +67,32 @@ urlpatterns = [
     path('del_staff/<int:id_staff>', del_staff, name='del_staff'),
 
 
-    path('tabel_driver/<str:ch_day>', tabel_driver_view, name='tabel_driver'),
+    path('tabel_driver/<str:day>', tabel_driver_view, name='tabel_driver'),
     path('tabel_workday/<str:ch_week>', tabel_workday_view, name='tabel_workday'),
-    # path('tabel_technic/<str:ch_day>', tabel_technic_view, name='tabel_technic'),################
-    path('technic_driver/<str:ch_day>', Technic_Driver_view, name='technic_driver'),
-    path('tech_list/<str:ch_day>', Technic_Driver_view, name='tech_list'),
+    path('technic_driver/<str:day>', Technic_Driver_view, name='technic_driver'),
+    path('tech_list/<str:day>', Technic_Driver_view, name='tech_list'),
 
     path('admin/', admin.site.urls),
     path('signin/', signin_view, name="sign_in"),
     path('signup/', signup_view, name="sign_up"),
     path('logout', logout_view, name="logout"),
 
-    path('today_app/<str:ch_day>', show_today_applications, name="show_today_applications"),
+    path('today_app/<str:day>', show_today_applications, name="show_today_applications"),
     path('info_app/<int:id_application>', show_info_application, name="show_info_application"),
     path('new_app/<int:id_application>', create_new_application, name="add_application"),
     path('clear_app/<int:id_application>', clear_application_view, name='clear_application'),
     path('success_app/<int:id_application>', success_application, name='success_application'),
-    path('conflict_resolution/<str:ch_day>', conflict_resolution_view, name="conflict_resolution"),
-    path('conflict_correction/<str:ch_day>/<str:id_applications>', conflict_correction_view, name="conflict_correction"),
+    path('conflict_resolution/<str:day>', conflict_resolution_view, name="conflict_resolution"),
+    path('conflict_correction/<str:day>/<str:id_applications>', conflict_correction_view, name="conflict_correction"),
 
-    path('personal_application/<str:ch_day>/<str:id_user>', show_application_for_driver, name='application_for_driver'),
+    path('personal_application/<str:day>/<str:id_user>', show_application_for_driver, name='application_for_driver'),
 
-    path('driver_app_list/<str:ch_day>', driver_app_list_view, name='driver_app_list'),
-    path('foreman_app_list/<str:ch_day>', foreman_app_list_view, name='foreman_app_list'),
+    path('driver_app_list/<str:day>', driver_app_list_view, name='driver_app_list'),
+    path('foreman_app_list/<str:day>', foreman_app_list_view, name='foreman_app_list'),
 
 
 
-    path('approv_all_applications/<str:ch_day>', approv_all_applications, name='approv_all_applications'),
-    path('submitted_all_applications/<str:ch_day>', submitted_all_applications, name='submitted_all_applications'),
+    path('approv_all_applications/<str:day>', approv_all_applications, name='approv_all_applications'),
+    path('submitted_all_applications/<str:day>', submitted_all_applications, name='submitted_all_applications'),
 
-    # path('debug/', include('debug_toolbar.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

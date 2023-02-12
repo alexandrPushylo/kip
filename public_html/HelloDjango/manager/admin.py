@@ -1,8 +1,8 @@
 from django.contrib import admin
 from manager.models import ApplicationTechnic, ApplicationStatus, ApplicationToday
 from manager.models import ConstructionSite, ConstructionSiteStatus
-from manager.models import TechnicDriver, DriverTabel, TechnicTabel
-from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply, Staff
+from manager.models import TechnicDriver, DriverTabel
+from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply
 from manager.models import Technic, TechnicStatus, TechnicName, TechnicType
 from manager.models import WorkDayTabel
 from manager.models import Variable
@@ -26,14 +26,12 @@ admin.site.register(StaffMaster)
 admin.site.register(StaffDriver)
 admin.site.register(StaffMechanic)
 admin.site.register(StaffSupply)
-admin.site.register(Staff)
 
 
 admin.site.register(Technic)
 admin.site.register(TechnicStatus)
 admin.site.register(TechnicName)
 admin.site.register(TechnicType)
-admin.site.register(TechnicTabel)
 
 admin.site.register(Variable)
 

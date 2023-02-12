@@ -8,8 +8,8 @@ from django.contrib.auth.models import User
 from manager.models import ApplicationTechnic, ApplicationStatus, ApplicationToday
 from manager.models import ConstructionSite, ConstructionSiteStatus
 from manager.models import TechnicDriver, DriverTabel
-from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply, Staff
-from manager.models import Technic, TechnicStatus, TechnicName, TechnicType, TechnicTabel
+from manager.models import StaffAdmin, StaffForeman, StaffMaster, StaffDriver, StaffMechanic, StaffSupply
+from manager.models import Technic, TechnicStatus, TechnicName, TechnicType
 from manager.models import WorkDayTabel
 from manager.models import Variable
 
@@ -31,6 +31,7 @@ from manager.utilities import get_difference
 from manager.utilities import get_week
 from manager.utilities import timedelta
 from manager.utilities import choice as rand_choice
+from manager.utilities import convert_str_to_date
 # ----------------
 
 # ----------PREPARE--------------
@@ -41,10 +42,10 @@ from manager.utilities import choice as rand_choice
 # ------FUNCTION VIEW----------------------
 
 
-def foreman_app_list_view(request, ch_day):
+def foreman_app_list_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     foreman_list = StaffForeman.objects.filter()
     app_list = []
     for _fman in foreman_list:
@@ -57,11 +58,10 @@ def foreman_app_list_view(request, ch_day):
     return render(request, 'foreman_app_list.html', out)
 
 
-def driver_app_list_view(request, ch_day):
+def driver_app_list_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-    current_day = get_current_day(ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     current_app_tech = ApplicationTechnic.objects.filter(
         technic_driver__status=True,
         app_for_day__date=current_day,
@@ -78,13 +78,13 @@ def driver_app_list_view(request, ch_day):
     return render(request, 'driver_app_list.html', out)
 
 
-def conflict_correction_view(request, ch_day, id_applications):
+def conflict_correction_view(request, day, id_applications):
     out = {}
     id_application_list = id_applications.split(',')[:-1]
     tech_app_list = ApplicationTechnic.objects.filter(id__in=id_application_list)
     current_user = request.user
-    get_prepare_data(out, request, selected_day=ch_day)
-    current_day = get_current_day(ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     out["date_of_target"] = current_day
     out['tech_app_list'] = tech_app_list.order_by('technic_driver__driver__driver__user__last_name')
     out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day, 1)
@@ -93,9 +93,7 @@ def conflict_correction_view(request, ch_day, id_applications):
     vehicle_and_driver = TechnicDriver.objects.filter(date=current_day, driver__isnull=False).values_list(
         'technic__name__name',
         'driver__driver__user__last_name',
-        'id',
-        # 'applicationtechnic__app_for_day__construction_site__address',
-        # 'applicationtechnic__app_for_day__construction_site__foreman__user__last_name'
+        'id'
     )
     out['vehicle_and_driver'] = vehicle_and_driver
 
@@ -115,14 +113,14 @@ def conflict_correction_view(request, ch_day, id_applications):
             else:
                 app.delete()
 
-        return HttpResponseRedirect(f'/conflict_resolution/{ch_day}')
+        return HttpResponseRedirect(f'/conflict_resolution/{day}')
     return render(request, 'conflict_correction.html', out)
 
 
-def conflict_resolution_view(request, ch_day):
+def conflict_resolution_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     out["date_of_target"] = current_day
 
     conflict_list = get_conflicts_vehicles_list(current_day)
@@ -244,12 +242,12 @@ def show_staff_view(request):
     staff_list = User.objects.all().order_by('last_name')
     _user_post = []
     for _user in staff_list:
-        _post = get_current_staff(_user)
+        _post = dict_Staff[get_current_post(_user, key=True)]
         _tel = get_current_post(_user)
-        _user_post.append((_user,_post ,_tel))
+        _user_post.append((_user, _post, _tel))
     out['user_post'] = _user_post
     out['staff_list'] = staff_list
-    return render(request,'show_staff.html', out)
+    return render(request, 'show_staff.html', out)
 
 
 def edit_staff_view(request, id_staff):
@@ -316,45 +314,23 @@ def edit_staff_view(request, id_staff):
 # TABEL----------------------------------------------------------------------------------------TABEL--------------------
 
 
-def tabel_driver_view(request, ch_day):
+def tabel_driver_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-
-    ####
-    prepare_driver_table(ch_day)    ####!!!!
-    ###
-    #
-    # driver_list = StaffDriver.objects.all()
-    # if DriverTabel.objects.filter(date=current_day).count() == 0:
-    #     if ch_day == 'next_day':
-    #         try:
-    #             for _drv in DriverTabel.objects.filter(date=TODAY):
-    #                 DriverTabel.objects.create(driver=_drv.driver, date=current_day, status=_drv.status)
-    #         except DriverTabel.DoesNotExist:
-    #             for drv in driver_list:
-    #                 DriverTabel.objects.create(driver=drv, date=current_day)
-    #     else:
-    #         for drv in driver_list:
-    #             DriverTabel.objects.create(driver=drv, date=current_day)
-
-
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
+    prepare_driver_table(day)
     driver_today_tabel = DriverTabel.objects.filter(date=current_day)
     out['driver_list'] = driver_today_tabel.order_by('driver__user__last_name')
 
-    if request.method == 'POST':
-        id_driver_list = request.POST.getlist('staff_id')
-        for n, staff_id in enumerate(id_driver_list,1):
-            if request.POST.get(f'staff_status_{n}'):
-                st = DriverTabel.objects.get(id=staff_id)
-                st.status = True
-                st.save()
-            else:
-                st = DriverTabel.objects.get(id=staff_id)
-                st.status = False
-                st.save()
-        return HttpResponseRedirect(f'/tabel_driver/{ch_day}')
-    return render(request,'tabel_driver.html', out)
+
+    if request.POST.get('id_drv'):
+        _id = request.POST.get('id_drv')
+        _status = request.POST.get('status')
+        _user = DriverTabel.objects.get(id=_id)
+        _user.status = str(_status).capitalize()
+        _user.save()
+
+    return render(request, 'tabel_driver.html', out)
 
 
 def tabel_workday_view(request, ch_week):
@@ -399,50 +375,12 @@ def tabel_workday_view(request, ch_week):
     return render(request, 'tabel_workday.html', out)
 
 
-def tabel_technic_view(request, ch_day):#TODO: dell
+def Technic_Driver_view(request, day):
     out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-
-    technic_list = Technic.objects.all()
-
-    if TechnicTabel.objects.filter(date=current_day).count()==0:
-        if ch_day == 'next_day':
-            try:
-                for _tech in TechnicTabel.objects.filter(date=TODAY):
-                    TechnicTabel.objects.create(technic=_tech.technic, date=current_day, status=_tech.status)
-            except TechnicTabel.DoesNotExist:
-                for tech in technic_list:
-                    TechnicTabel.objects.create(technic=tech, date=current_day)
-        else:
-            for tech in technic_list:
-                TechnicTabel.objects.create(technic=tech, date=current_day)
-    technic_today_list = TechnicTabel.objects.filter(date=current_day)
-    out['technic_today_list'] = technic_today_list
-
-    if request.method == 'POST':
-        id_tech_list = request.POST.getlist('tech_id')
-        for n, tech_id in enumerate(id_tech_list,1):
-            if request.POST.get(f'tech_status_{n}'):
-                st = TechnicTabel.objects.get(id=tech_id)
-                st.status = True
-                st.save()
-            else:
-                st = TechnicTabel.objects.get(id=tech_id)
-                st.status = False
-                st.save()
-
-        return HttpResponseRedirect(f'/tabel_technic/{ch_day}')
-    return render(request, 'tabel_technic.html', out)
-
-
-def Technic_Driver_view(request, ch_day):
-    out = {}
-    current_day = get_current_day(ch_day)
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
-####################### TEST
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     if DriverTabel.objects.filter(date=current_day, status=True).count() == 0:
-        prepare_driver_table(ch_day)
+        prepare_driver_table(day)
 
 
 
@@ -454,18 +392,18 @@ def Technic_Driver_view(request, ch_day):
 
     tech_drv_list_today = TechnicDriver.objects.filter(date=TODAY)
 
-    if TechnicDriver.objects.filter(date=current_day).count()==0:
-        if ch_day == 'next_day':
+    if TechnicDriver.objects.filter(date=current_day).count() == 0:
+        if get_CH_day(day) == 'next_day':
             for _tech in Technic.objects.all():
-                _drv = tech_drv_list_today.filter(technic=_tech).values_list('driver__driver__user__last_name','status')
-                driver=_drv[0][0]
-                status =_drv[0][1]
+                _drv = tech_drv_list_today.filter(technic=_tech).values_list('driver__driver__user__last_name', 'status')
+                driver = _drv[0][0]
+                status = _drv[0][1]
 
                 c_drv = work_driver_list.filter(driver__user__last_name=driver)
 
-                if c_drv.count()!=0:
+                if c_drv.count() != 0:
                     TechnicDriver.objects.create(technic=_tech,
-                                                 driver=DriverTabel.objects.get(date=current_day,driver__user__last_name = driver),
+                                                 driver=DriverTabel.objects.get(date=current_day, driver__user__last_name = driver),
                                                  date=current_day,
                                                  status=status)
                 else:
@@ -476,7 +414,7 @@ def Technic_Driver_view(request, ch_day):
                                                  status=status)
         else:
             for tech in Technic.objects.all():
-                TechnicDriver.objects.create(technic=tech,date=TODAY,status=True)
+                TechnicDriver.objects.create(technic=tech, date=TODAY, status=True)
     else:
         technic_driver_list = TechnicDriver.objects.filter(date=current_day)
 
@@ -496,23 +434,17 @@ def Technic_Driver_view(request, ch_day):
     out['technic_driver_list'] = technic_driver_list.order_by('technic__name__name')
     out['work_driver_list'] = work_driver_list.order_by('driver__user__last_name')
 
-    if request.method == 'POST':
-        driver_list = request.POST.getlist('select_drv')
-        tech_drv_id_list = request.POST.getlist('tech_drv_id')###   tech_status_
-
-
-        for n, _id_td in enumerate(tech_drv_id_list):
-            _td = TechnicDriver.objects.get(id=_id_td)
-            if driver_list[n]:
-                _td.driver = DriverTabel.objects.get(id=driver_list[n])
-            else:
-                _td.driver = None
-            if request.POST.get(f'tech_status_{n+1}'):
-                _td.status = True
-                _td.save()
-            else:
-                _td.status = False
-                _td.save()
+    if request.POST.get('tech'):
+        tech = request.POST.get('tech')
+        id_drv = request.POST.get('id_drv')
+        stat = request.POST.get('status')
+        _td = TechnicDriver.objects.get(id=tech)
+        if id_drv:
+            _td.driver = DriverTabel.objects.get(id=id_drv)
+        else:
+            _td.driver = None
+        _td.status = str(stat).capitalize()
+        _td.save()
 
     if 'tech_list' in request.path:
         return render(request, 'tech_list.html', out)
@@ -530,10 +462,11 @@ def clear_application_view(request, id_application):
     return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
 
 
-def show_applications_view(request, ch_day, id_user=None):
+def show_applications_view(request, day, id_user=None):
     if request.user.is_anonymous:
         return HttpResponseRedirect('/')
-    current_day = get_current_day(ch_day)
+
+    current_day = convert_str_to_date(day)
     out = {"constr_site_list": []}
 
     if id_user:
@@ -541,7 +474,8 @@ def show_applications_view(request, ch_day, id_user=None):
         out['current_user'] = current_user
     else:
         current_user = request.user
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+
+    get_prepare_data(out, request, current_day)
 
     construction_site_list = ConstructionSite.objects.filter(status=ConstructionSiteStatus.objects.get(status=STATUS_CS['opened']))
 
@@ -585,6 +519,12 @@ def show_applications_view(request, ch_day, id_user=None):
             l_out.append((_drv, count, attach_drv, tech_drv))
         out["DRV_LIST"] = l_out
 
+        if request.POST.get('panel'):
+            _flag = request.POST.get('panel')
+            set_var(f'panel_{request.user.id}', value=request.user.id, flag=_flag)
+        out['var_drv_panel'] = get_var(f'panel_{request.user.id}')
+
+
     if is_foreman(current_user):
         _foreman = StaffForeman.objects.get(user=current_user).user
         app_for_day = ApplicationToday.objects.filter(construction_site__foreman__user=_foreman, date=current_day)
@@ -612,15 +552,16 @@ def show_applications_view(request, ch_day, id_user=None):
         return render(request, "main.html", out)
 
 
-def show_application_for_driver(request, ch_day, id_user=None):
-    current_day = get_current_day(ch_day)
+def show_application_for_driver(request, day, id_user=None):
     out = {}
+    current_day = convert_str_to_date(day)
+    get_prepare_data(out, request, current_day)
     if id_user:
         current_user = User.objects.get(id=id_user)
     else:
         current_user = User.objects.get(username=request.user)
     out["current_user"] = current_user
-    get_prepare_data(out, request, current_day, selected_day=ch_day)
+
     out["date_of_target"] = current_day.strftime('%d %B')
 
     applications = ApplicationTechnic.objects.filter(app_for_day__date=current_day,
@@ -634,24 +575,10 @@ def show_application_for_driver(request, ch_day, id_user=None):
         return render(request, 'extend/admin_app_for_driver.html', out)
     return render(request, 'applications_for_driver.html', out)
 
-
-# def tech_list_view(request, ch_day):
-#     out = {}
-#     current_day = get_current_day(ch_day)
-#     get_prepare_data(out, request, current_day, ch_day)
-#
-#     tech_drv_list = TechnicDriver.objects.filter(date=current_day)
-#
-#     out['tech_drv_list'] = tech_drv_list
-#     if 'tech_list' in request.path:
-#         print(request.path)
-#     return render(request, 'tech_list.html', out)
-
-
-def show_today_applications(request, ch_day):
-    current_day = get_current_day(ch_day)
+def show_today_applications(request, day):
+    current_day = convert_str_to_date(day)
     out = {}
-    get_prepare_data(out, request, selected_day=ch_day)
+    get_prepare_data(out, request, current_day)
 
     out["date_of_target"] = current_day
     if is_admin(request.user):
@@ -677,15 +604,9 @@ def show_today_applications(request, ch_day):
     app_list = []
     for _drv, _tech in driver_technic:
         desc = app_tech_day.filter(technic_driver__driver__driver__user__last_name=_drv,
-                                   technic_driver__technic__name__name=_tech).values_list(
-            'description',
-            'app_for_day__construction_site__foreman__user__last_name',
-            'app_for_day__construction_site__address',
-            'priority',
-            'id'
-        )
-        if (_drv, _tech,desc) not in app_list:
-            app_list.append((_drv, _tech,desc))
+                                   technic_driver__technic__name__name=_tech).order_by('priority')
+        if (_drv, _tech, desc) not in app_list:
+            app_list.append((_drv, _tech, desc))
     out["today_technic_applications"] = app_list
 
     if request.method == 'POST':
@@ -698,7 +619,7 @@ def show_today_applications(request, ch_day):
             app.priority = pr
             app.description = desc
             app.save()
-        return HttpResponseRedirect(f'/today_app/{ch_day}')
+        return HttpResponseRedirect(f'/today_app/{day}')
     return render(request, "today_applications.html", out)
 
 
@@ -821,6 +742,7 @@ def signin_view(request):
         'WEEKDAY_TODAY': WEEKDAY[TODAY.weekday()],
         'err': False
     }
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -909,26 +831,26 @@ def logout_view(request):
 
 
 # ------------------SUPPORT FUNCTION-------------------------------
-def approv_all_applications(request, ch_day):
+def approv_all_applications(request, day):
     if is_admin(request.user):
-        current_day = get_current_day(ch_day)
+        current_day = convert_str_to_date(day)
         current_applications = ApplicationToday.objects.filter(
             status=ApplicationStatus.objects.get(status=STATUS_AP['submitted']), date=current_day)
         for app in current_applications:
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
             app.save()
-    return HttpResponseRedirect(f'/applications/{ch_day}')
+    return HttpResponseRedirect(f'/applications/{day}')
 
 
-def submitted_all_applications(request, ch_day):
+def submitted_all_applications(request, day):
     if is_foreman(request.user) or is_master(request.user) or is_employee_supply(request.user):
-        current_day = get_current_day(ch_day)
+        current_day = convert_str_to_date(day)
         current_applications = ApplicationToday.objects.filter(
             status=ApplicationStatus.objects.get(status=STATUS_AP['saved']), date=current_day)
         for app in current_applications:
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
             app.save()
-    return HttpResponseRedirect(f'/applications/{ch_day}')
+    return HttpResponseRedirect(f'/applications/{day}')
 
 
 def get_work_TD_list(current_day, c_in=1, F_saved=False):
@@ -998,25 +920,6 @@ def get_current_post(user, key=False):
     else:
         return current_staff
 
-
-def get_current_staff(user):
-    if is_admin(user):
-        staff = dict_Staff['admin']
-    elif is_foreman(user):
-        staff = dict_Staff['foreman']
-    elif is_master(user):
-        staff = dict_Staff['master']
-    elif is_driver(user):
-        staff = dict_Staff['driver']
-    elif is_mechanic(user):
-        staff = dict_Staff['mechanic']
-    elif is_employee_supply(user):
-        staff = dict_Staff['employee_supply']
-    else:
-        staff = 'AnonymousUser'
-    return staff
-
-
 def is_admin(user):
     if StaffAdmin.objects.filter(user=user):
         return True
@@ -1058,33 +961,40 @@ def show_start_page(request):
         return HttpResponseRedirect("signin/")
     else:
         if is_admin(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_foreman(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_master(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_driver(request.user):
-            return HttpResponseRedirect(f"personal_application/today/{request.user.id}")
+            return HttpResponseRedirect(f"personal_application/{get_current_day('last_day')}/{request.user.id}")
         elif is_mechanic(request.user):
-            return HttpResponseRedirect("tech_list/today")
+            return HttpResponseRedirect(f"tech_list/{get_current_day('last_day')}")
         elif is_employee_supply(request.user):
-            return HttpResponseRedirect("applications/next_day")
+            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         else:
-            return HttpResponseRedirect("/today_app/today")
+            return HttpResponseRedirect(f"/today_app/{get_current_day('last_day')}")
 
 
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
-    out['TODAY'] = f'{TODAY.day} {MONTH[TODAY.month-1]}'# TODAY#.strftime('%d %B')
-    out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
+    if isinstance(current_day, str):
+        current_day = convert_str_to_date(current_day)
+    out['nw_day'] = str(get_current_day('next_day'))
+    out['cw_day'] = str(get_current_day(get_CH_day(current_day)))
+    out['lw_day'] = str(get_current_day('last_day'))
     out["WEEKDAY_TODAY"] = WEEKDAY[TODAY.weekday()]
-    out["WEEKDAY"] = WEEKDAY[get_current_day('next_day').weekday()] if selected_day == 'next_day' else WEEKDAY[get_current_day('today').weekday()]
-    out["TOMORROW"] = TOMORROW.strftime('%d %B')
-    out["post"] = get_current_staff(request.user)
-    out["CH_DAY"] = selected_day
+    out['TODAY'] = f'{TODAY.day} {MONTH[TODAY.month-1]}'
+    out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
+    out["WEEKDAY"] = WEEKDAY[current_day.weekday()]
+    out["post"] = get_current_post(request.user, key=True)
+
+    # out["TOMORROW"] = TOMORROW.strftime('%d %B')
+    # out["CH_DAY"] = selected_day
     return out
 
 
 def success_application(request, id_application):
+    """изменение статуса заявки"""
     current_application = ApplicationToday.objects.get(id=id_application)
     if is_admin(request.user):
         current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
@@ -1095,27 +1005,31 @@ def success_application(request, id_application):
 
 
 def get_current_day(selected_day: str):
+    """получить (следующий, текущий, прошлый) рабочий день """
     if selected_day == 'next_day':
         for n in range(1, 14):
             _day = WorkDayTabel.objects.get(date=TODAY+timedelta(n))
             if _day.status:
                 return _day.date
-    else:
+    elif selected_day == 'last_day':
         for n in range(14):
             _day = WorkDayTabel.objects.get(date=TODAY - timedelta(n))
             if _day.status:
                 return _day.date
+    else:
+        return TODAY
 
 
 def get_CH_day(day):
-    if str(day) == str(TODAY):
-        return 'current_day'
-    else:
+    if str(day) == str(get_current_day('next_day')):
         return 'next_day'
+    else:
+        return 'last_day'
 
 
-def prepare_driver_table(ch_day):
-    current_day = get_current_day(ch_day)
+def prepare_driver_table(day):
+    current_day = day
+    ch_day = get_CH_day(day)
     driver_list = StaffDriver.objects.all()
     if DriverTabel.objects.filter(date=current_day).count() == 0:
         if ch_day == 'next_day':
@@ -1131,3 +1045,26 @@ def prepare_driver_table(ch_day):
 
 
 # ---------------------------------------------------------------
+
+
+def get_var(var, value=False, flag=False):
+    try:
+        _var = Variable.objects.get(name=var)
+        if flag and not value:
+            return _var.flag
+        elif value and flag:
+            return _var.value, _var.flag
+        elif value and not flag:
+            return _var.value
+        else:
+            return _var
+    except Variable.DoesNotExist:
+        return None
+
+
+def set_var(name, value=None, flag=False):
+    _var, _ = Variable.objects.get_or_create(name=name)
+    _var.value = value
+    _var.flag = flag
+    _var.save()
+    return _var

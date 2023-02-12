@@ -32,7 +32,7 @@
 
                 <div class=" mb-3 " id="vehicle_list">
                     <label><b class="fs-5 me-5">{{ v.0 }}</b>
-                    <a href="/conflict_correction/{{ CH_DAY }}/{% for i in v.1 %}{{ i.id }},{% endfor %}" class="btn btn-outline-secondary  col-auto " aria-current="page">Редактировать</a>
+                    <a href="/conflict_correction/{{ cw_day }}/{% for i in v.1 %}{{ i.id }},{% endfor %}" class="btn btn-outline-secondary  col-auto " aria-current="page">Редактировать</a>
                     </label>
                     <hr>
                     {% for d in v.1 %}
@@ -69,7 +69,7 @@
 
 {% block bottom_panel %}
 <div class="input-group d-flex justify-content-center align-items-center">
-  <a href="{% url 'application_list' CH_DAY %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
+  <a href="{% url 'application_list' cw_day %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Назад</a>
 
 </div>
 

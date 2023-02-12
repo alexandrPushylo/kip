@@ -1,24 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container-sm mx-auto m-3   p-3"  >
+<div class="container-sm mx-auto m-2 "  >
   <form method="post" id="create_new_appls_form" enctype="multipart/form-data">{% csrf_token %}
     <div class="card shadow-lg" style="background-color: rgba(247,247,248,0.71)">
       <div class="container-fluid">
 
+
+      <div class="input-group">
         <p class="card-text">
             <label>Объект:</label>
-            <input class="form-control form-control-sm" type="text" name="construction_site" value="{{ construction_site.address }}">
+            <input class="form-control form-control-sm" readonly type="text" name="construction_site" value="{{ construction_site.address }}">
         </p>
 
-        <p class="card-text">
+        <p class="card-text ms-3">
             <label>Заявка на:</label>
-            <input class="form-control form-control-sm" type="date" name="date_of_target" value="{{ date_of_target }}">
-            <hr>
+            <input class="form-control form-control-sm" readonly type="date" name="date_of_target" value="{{ date_of_target }}">
+
         </p>
-        <ul class="container-fluid ul_tech_list" >
+      </div>
+      <hr>
+        <div class="container-fluid pb-3 ul_tech_list" >
              {% for v in list_of_vehicles %}
-            <div class="container-fluid mt-4" id="{{forloop.counter}}">
+            <div class="mt-4" id="{{forloop.counter}}">
                 <div class="input-group tech_driver_list" id="{{forloop.counter}}">
                     <input name="io_id_app_tech" type="hidden" value="{{ v.id }}">
                     <input name="io_id_tech_driver" type="hidden" value="{{ v.technic_driver.id }}" id="io_id_tech_driver_{{forloop.counter}}">
@@ -57,9 +61,10 @@
 
             </div>
             {% endfor %}
-        </ul>
+        </div>
       </div>
     </div>
+  </form>
 
 {#------------------------------------------------------------------------------------------------------------------#}
 
@@ -68,7 +73,7 @@
         <div class="container-fluid row">
 
 
-            <select class=" col-4" id="input_tech_add">
+            <select class=" col-auto" id="input_tech_add">
                 <option selected>---</option>
                 {% for v in D %}
                     {% if v.1 in work_tech_name_list %}
@@ -79,7 +84,7 @@
 
             {% for d in D %}
 
-            <select hidden="" class=" col-4 {{ d.0 }} driver_add" id="input_driver_add">
+            <select hidden="" class="col-auto {{ d.0 }} driver_add" id="input_driver_add">
                 <option selected id_dt=""></option>
                 {% for v in d.2 %}
                     <option  {% if v.0 in work_TD_list %} style="color: blue" {% endif %} value="{{ v.1 }}" id_dt="{{ v.0 }}">{{ v.1 }}</option>
@@ -88,13 +93,11 @@
 
             {% endfor %}
 
-            <button role="button" class="btn btn-success ms-2 btn-sm  col-auto position-absolute end-0 me-3" id = "add_vehicle_btn">Добавить</button>
-            <textarea class="form-control mt-2 app_description" id="description_app_add" rows="3" placeholder="Пишите подробное описание"></textarea>
-
+            <button role="button" class="btn btn-success   btn-sm  col-auto position-absolute end-0  me-3" id = "add_vehicle_btn">Добавить</button>
         </div>
+            <textarea class="form-control mt-3 app_description mx-auto" id="description_app_add" rows="3" placeholder="Пишите подробное описание"></textarea>
       </div>
     </div>
-  </form>
 </div>
 
 {% endblock %}
@@ -105,9 +108,10 @@
 
 {% block bottom_panel %}
 <div class="input-group d-flex justify-content-center align-items-center">
-  <a href="{% url 'application_list' CH_DAY %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Отмена</a>
+  <a href="{% url 'application_list' cw_day %}" class="btn btn-outline-primary active  col-auto m-1" aria-current="page">Отмена</a>
 
   <input form="create_new_appls_form" class="btn btn-success  col-auto  m-1" type="submit" value="Сохранить заявку">
+
 </div>
 
 {% endblock %}

@@ -4,14 +4,14 @@
 
     <div class="container mt-3">
         <h3 class="text-center m-0">
-            {% if CH_DAY == 'next_day' %}
-                <a href="{% url 'driver_app_list' 'current_day' %}" class="btn " aria-current="page">
+            {% if cw_day == nw_day %}
+                <a href="{% url 'driver_app_list' lw_day %}" class="btn " aria-current="page">
                 Сегодня <
                 </a>
                 {{ DAY }}
             {% else %}
                 {{ DAY }}
-                <a href="{% url 'driver_app_list' 'next_day' %}" class="btn fw-light" aria-current="page">
+                <a href="{% url 'driver_app_list' nw_day %}" class="btn fw-light" aria-current="page">
                 > Следующий рабочий день
                 </a>
             {% endif %}
@@ -27,7 +27,7 @@
           <div class="card-body">
               <h5 class="card-title fw-bold" style="text-align: center">
 
-                  <a href="{% url 'application_for_driver' CH_DAY drv.driver.user.id %}" class="btn btn-link" aria-current="page">
+                  <a href="{% url 'application_for_driver' cw_day drv.driver.user.id %}" class="btn btn-link" aria-current="page">
                       <b>{{drv.driver.user.last_name}} {{drv.driver.user.first_name}}</b>
                   </a>
               </h5>
