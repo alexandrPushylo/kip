@@ -1006,13 +1006,19 @@ def show_start_page(request):
 
 
 def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str = 'next_day'):
-    out['TODAY'] = f'{TODAY.day} {MONTH[TODAY.month-1]}'# TODAY#.strftime('%d %B')
-    out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
+    if isinstance(current_day, str):
+        current_day = convert_str_to_date(current_day)
+    out['nw_day'] = str(get_current_day('next_day'))
+    out['cw_day'] = str(get_current_day(get_CH_day(current_day)))
+    out['lw_day'] = str(get_current_day('last_day'))
     out["WEEKDAY_TODAY"] = WEEKDAY[TODAY.weekday()]
-    out["WEEKDAY"] = WEEKDAY[get_current_day('next_day').weekday()] if selected_day == 'next_day' else WEEKDAY[get_current_day('today').weekday()]
-    out["TOMORROW"] = TOMORROW.strftime('%d %B')
-    out["post"] = get_current_staff(request.user)
-    out["CH_DAY"] = selected_day
+    out['TODAY'] = f'{TODAY.day} {MONTH[TODAY.month-1]}'
+    out["DAY"] = f'{current_day.day} {MONTH[current_day.month-1]}'
+    out["WEEKDAY"] = WEEKDAY[current_day.weekday()]
+    out["post"] = get_current_post(request.user, key=True)
+
+    # out["TOMORROW"] = TOMORROW.strftime('%d %B')
+    # out["CH_DAY"] = selected_day
     return out
 
 
