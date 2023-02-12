@@ -930,25 +930,6 @@ def get_current_post(user, key=False):
     else:
         return current_staff
 
-
-def get_current_staff(user):
-    if is_admin(user):
-        staff = dict_Staff['admin']
-    elif is_foreman(user):
-        staff = dict_Staff['foreman']
-    elif is_master(user):
-        staff = dict_Staff['master']
-    elif is_driver(user):
-        staff = dict_Staff['driver']
-    elif is_mechanic(user):
-        staff = dict_Staff['mechanic']
-    elif is_employee_supply(user):
-        staff = dict_Staff['employee_supply']
-    else:
-        staff = 'AnonymousUser'
-    return staff
-
-
 def is_admin(user):
     if StaffAdmin.objects.filter(user=user):
         return True
