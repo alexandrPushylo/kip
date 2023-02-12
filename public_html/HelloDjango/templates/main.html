@@ -2,9 +2,9 @@
 
 
 {% block indicator %}
-    {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' CH_DAY %}" class="btn btn-sm btn-danger ">Конфликты</a>
-     {% elif not conflicts_vehicles_list and submitted_app_list %}<a href="{% url 'approv_all_applications' CH_DAY %}" class="btn btn-sm btn-success ">Одобрить все заявки</a>
 {% if post == 'admin' %}
+    {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' cw_day %}" class="btn btn-sm btn-danger ">Конфликты</a>
+     {% elif not conflicts_vehicles_list and submitted_app_list %}<a href="{% url 'approv_all_applications' cw_day %}" class="btn btn-sm btn-success ">Одобрить все заявки</a>
     {% else %}{% endif %}
 {% elif post == 'foreman' or 'master' or 'employee_supply' %}
     {% if saved_app_list %}

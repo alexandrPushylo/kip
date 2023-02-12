@@ -117,7 +117,7 @@ def conflict_correction_view(request, day, id_applications):
     return render(request, 'conflict_correction.html', out)
 
 
-def conflict_resolution_view(request, ch_day):
+def conflict_resolution_view(request, day):
     out = {}
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
