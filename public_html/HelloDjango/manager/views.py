@@ -149,16 +149,21 @@ def show_construction_sites_view(request):
     out = {}
     get_prepare_data(out, request)
 
+    all_constr_site_list = ConstructionSite.objects.all().order_by('address')
+
     if is_admin(request.user):
-        construction_sites_list = ConstructionSite.objects.all()
+        construction_sites_list = all_constr_site_list
     elif is_foreman(request.user):
-        construction_sites_list = ConstructionSite.objects.filter(foreman=StaffForeman.objects.get(user=request.user))
+        construction_sites_list = all_constr_site_list.filter(foreman=StaffForeman.objects.get(user=request.user))
     elif is_master(request.user):
         foreman = StaffMaster.objects.get(user=request.user).foreman
-        construction_sites_list = ConstructionSite.objects.filter(foreman=foreman)
+        construction_sites_list = all_constr_site_list.filter(foreman=foreman)
     else:
         return HttpResponseRedirect('/')
-    out["construction_sites_list"] = construction_sites_list
+    out["construction_sites_list"] = construction_sites_list.filter(
+        status=ConstructionSiteStatus.objects.get(status='Открыт'))
+    out["constr_sites_list_close"] = construction_sites_list.filter(
+        status=ConstructionSiteStatus.objects.get(status='Закрыт'))
     return render(request, 'construction_sites.html', out)
 
 
