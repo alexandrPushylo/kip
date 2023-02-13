@@ -759,11 +759,11 @@ def create_new_application(request, id_application):
 
         if len(id_app_tech) < len(vehicle_list):
             n = len(vehicle_list) - _len__id_app_list
-            for i in range(0,n):
+            for i in range(0, n):
                 tech_drv = TechnicDriver.objects.get(
                     driver__driver__user__last_name=driver_list[_len__id_app_list + i],
                     technic__name__name=vehicle_list[_len__id_app_list + i],
-                    date=current_date)
+                    date=current_date, status=True)#############
                 description = description_app_list[_len__id_app_list + i]
                 ApplicationTechnic.objects.create(app_for_day=current_application,
                                                   technic_driver=tech_drv,
@@ -776,7 +776,7 @@ def create_new_application(request, id_application):
             current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['saved'])
         current_application.save()
 
-        return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
+        return HttpResponseRedirect(f'/applications/{current_date}')
     return render(request, "create_application.html", out)
 
 
