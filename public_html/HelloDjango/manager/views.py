@@ -501,7 +501,7 @@ def clear_application_view(request, id_application):
     ApplicationTechnic.objects.filter(app_for_day=current_application).delete()
     current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
     current_application.save()
-    return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
+    return HttpResponseRedirect(f'/applications/{current_application.date}')
 
 
 def show_applications_view(request, day, id_user=None):
@@ -1045,7 +1045,7 @@ def success_application(request, id_application):
     else:
         current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
     current_application.save()
-    return HttpResponseRedirect(f'/applications/{get_CH_day(current_application.date)}')
+    return HttpResponseRedirect(f'/applications/{current_application.date}')
 
 
 def get_current_day(selected_day: str):
