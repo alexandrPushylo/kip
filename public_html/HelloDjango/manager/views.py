@@ -788,7 +788,8 @@ def create_new_application(request, id_application):
             v_d_app = TechnicDriver.objects.get(
                 driver__driver__user__last_name=driver_list[i],
                 technic__name__name=vehicle_list[i],
-                date=current_date)
+                date=current_date,
+                status=True)
             l_of_v.technic_driver = v_d_app
             l_of_v.description = description_app_list[i]
             l_of_v.save()
