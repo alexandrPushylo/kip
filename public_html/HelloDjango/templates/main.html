@@ -65,7 +65,7 @@
 
 
           <div class="card-body mt-1" >
-            <h6 class="card-title" >{{a.app_today.construction_site.address}} ({{ a.app_today.construction_site.foreman.user.last_name }})</h6>
+            <h6 class="card-title" >{{a.app_today.construction_site.address}} {% if a.app_today.construction_site.foreman.user.last_name%}({{ a.app_today.construction_site.foreman.user.last_name }}){% endif %}</h6>
             <h6 class="card-title" >{{a.app_today.date}}</h6>
           {% if a.apps_tech %}
           <hr style="border-width: medium; border-color: green">
@@ -116,13 +116,13 @@
     </div>
 
     {% if post == 'admin' %}
-    <div class="driver_panel container col-auto   position-fixed end-0 "style="margin-top: -70px; height: 90vh;" {% if var_drv_panel.value == user.id|slugify and var_drv_panel.flag %} hidden="" {% endif %}>
+    <div class="driver_panel container col-auto   position-fixed end-0 "style="margin-top: -45px; height: 90vh;" {% if var_drv_panel.value == user.id|slugify and var_drv_panel.flag %} hidden="" {% endif %}>
         <div class="card-body  overflow-auto "style="height: 90%" >
 
             {% for drv, count, attach_drv, tech_drv in DRV_LIST %}
             <ol class="list-group" >
                 <li class="list-group-item d-flex justify-content-between align-items-start" >
-                <div class="" style="margin-left: -5px; margin-right: -10px;">
+                <div class="div_td"  style="margin-left: -5px; margin-right: -10px;" id="{{ drv.id }}">
                   <div class="fw-bold small
                     {% if not drv.status %} text-danger
                     {% elif count == 0 %}

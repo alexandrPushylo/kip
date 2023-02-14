@@ -44,17 +44,19 @@ from manager.views import del_staff
 
 from manager.views import tabel_driver_view
 from manager.views import tabel_workday_view
-
 from manager.views import Technic_Driver_view
 
 from manager.views import driver_app_list_view
 from manager.views import foreman_app_list_view
+
+from manager.views import append_in_hos_tech
 
 
 urlpatterns = [
     path('', show_start_page, name='start_page'),
     path('applications/<str:day>', show_applications_view, name='application_list'),
     path('applications/<int:id_user>/<str:day>', show_applications_view, name='application_list'),
+    path('append_in_hos_tech/<int:id_drv>', append_in_hos_tech, name='append_in_hos_tech'),
 
     path('construction_sites/', show_construction_sites_view, name='construction_sites'),
     path('edit_construction_sites/<int:id_construction_sites>', edit_construction_sites_view, name='edit_construction_sites'),

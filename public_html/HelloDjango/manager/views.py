@@ -42,6 +42,41 @@ from manager.utilities import convert_str_to_date
 # ------FUNCTION VIEW----------------------
 
 
+def append_in_hos_tech(request, id_drv):
+    _driver_table = DriverTabel.objects.get(id=id_drv)
+    status = _driver_table.status
+    date = _driver_table.date
+    driver = _driver_table.driver
+    if not status:
+        return HttpResponseRedirect(f'/applications/{date}')
+
+    constr_site, _ = ConstructionSite.objects.get_or_create(
+        address='Хоз. работы',
+        foreman=None)
+    constr_site.status=ConstructionSiteStatus.objects.get(status=STATUS_CS['opened'])
+    constr_site.save()
+
+    app_for_day, _ = ApplicationToday.objects.get_or_create(
+        construction_site=constr_site,
+        date=date)
+    app_for_day.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
+    app_for_day.save()
+
+    technic_driver = TechnicDriver.objects.filter(
+        driver=_driver_table,
+        date=date,
+        driver__status=True
+    ).first()
+
+    ApplicationTechnic.objects.get_or_create(
+        app_for_day=app_for_day,
+        technic_driver=technic_driver,
+        description=''
+    )
+
+    return HttpResponseRedirect(f"/applications/{date}")
+
+
 def foreman_app_list_view(request, day):
     out = {}
     current_day = convert_str_to_date(day)
