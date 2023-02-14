@@ -280,6 +280,8 @@ def add_construction_sites_view(request):
 
 
 def show_staff_view(request):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     get_prepare_data(out, request)
     staff_list = User.objects.all().order_by('last_name')
@@ -294,6 +296,8 @@ def show_staff_view(request):
 
 
 def edit_staff_view(request, id_staff):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     get_prepare_data(out, request)
 
@@ -358,6 +362,8 @@ def edit_staff_view(request, id_staff):
 
 
 def tabel_driver_view(request, day):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
@@ -390,6 +396,8 @@ def tabel_driver_view(request, day):
 
 
 def tabel_workday_view(request, ch_week):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     if ch_week == 'nextweek':
         _day = TODAY+timedelta(7)
@@ -439,6 +447,8 @@ def tabel_workday_view(request, ch_week):
 
 
 def Technic_Driver_view(request, day):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
@@ -535,6 +545,8 @@ def Technic_Driver_view(request, day):
 
 
 def clear_application_view(request, id_application):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     current_application = ApplicationToday.objects.get(id=id_application)
     ApplicationTechnic.objects.filter(app_for_day=current_application).delete()
     current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
@@ -633,6 +645,8 @@ def show_applications_view(request, day, id_user=None):
 
 
 def show_application_for_driver(request, day, id_user=None):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
@@ -656,6 +670,8 @@ def show_application_for_driver(request, day, id_user=None):
     return render(request, 'applications_for_driver.html', out)
 
 def show_today_applications(request, day):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     current_day = convert_str_to_date(day)
     out = {}
     get_prepare_data(out, request, current_day)
@@ -704,6 +720,8 @@ def show_today_applications(request, day):
 
 
 def show_info_application(request, id_application):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     current_application = ApplicationToday.objects.get(id=id_application)
 
@@ -721,6 +739,8 @@ def show_info_application(request, id_application):
 
 
 def create_new_application(request, id_application):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     out = {}
     current_user = request.user
     current_application = ApplicationToday.objects.get(id=id_application)
@@ -837,6 +857,8 @@ def signin_view(request):
 
 
 def del_staff(request, id_staff):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     user = User.objects.get(id=id_staff)
     get_current_post(user).delete()
     user.delete()
@@ -915,6 +937,8 @@ def logout_view(request):
 
 # ------------------SUPPORT FUNCTION-------------------------------
 def approv_all_applications(request, day):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     if is_admin(request.user):
         current_day = convert_str_to_date(day)
         current_applications = ApplicationToday.objects.filter(
@@ -926,6 +950,8 @@ def approv_all_applications(request, day):
 
 
 def submitted_all_applications(request, day):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     if is_foreman(request.user) or is_master(request.user) or is_employee_supply(request.user):
         current_day = convert_str_to_date(day)
         current_applications = ApplicationToday.objects.filter(
@@ -1078,6 +1104,8 @@ def get_prepare_data(out: dict, request, current_day=TOMORROW, selected_day: str
 
 def success_application(request, id_application):
     """изменение статуса заявки"""
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
     current_application = ApplicationToday.objects.get(id=id_application)
     if is_admin(request.user):
         current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
