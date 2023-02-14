@@ -14,6 +14,7 @@
             <label>Прораб:</label>
             <input  type="hidden" id="foreman_id"  value="{{ construction_sites.foreman.id }}"/>
             <select class=" col-auto" id="foreman_select" name="foreman">
+                        <option value=""></option>
                         {% for staff in staff_list %}
                             <option value="{{ staff.0 }}">{{ staff.1 }} {{ staff.2 }}</option>
                         {% endfor %}

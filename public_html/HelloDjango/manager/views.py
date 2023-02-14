@@ -230,7 +230,10 @@ def add_construction_sites_view(request):
     if request.method == 'POST':
         construction_sites = ConstructionSite.objects.create()
         construction_sites.address = request.POST['construction_site_address']
-        construction_sites.foreman = StaffForeman.objects.get(id=request.POST['foreman'])
+        if request.POST.get('foreman'):
+            construction_sites.foreman = StaffForeman.objects.get(id=request.POST['foreman'])
+        else:
+            construction_sites.foreman = None
         construction_sites.status = ConstructionSiteStatus.objects.get(status=STATUS_CS['opened'])
         construction_sites.save()
         return HttpResponseRedirect('/construction_sites/')
