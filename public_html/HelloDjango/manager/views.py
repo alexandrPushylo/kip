@@ -1005,7 +1005,7 @@ def show_start_page(request):
         return HttpResponseRedirect("signin/")
     else:
         if is_admin(request.user):
-            return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
+            return HttpResponseRedirect(f"applications/{get_current_day('last_day')}")
         elif is_foreman(request.user):
             return HttpResponseRedirect(f"applications/{get_current_day('next_day')}")
         elif is_master(request.user):
