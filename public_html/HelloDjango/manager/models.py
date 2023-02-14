@@ -133,7 +133,7 @@ class ConstructionSiteStatus(models.Model):
 
 class ConstructionSite(models.Model):  #Строительные объекты
     address = models.CharField(max_length=512, verbose_name="Адрес")
-    foreman = models.ForeignKey(StaffForeman, on_delete=models.SET_NULL, null=True, verbose_name="Прораб")
+    foreman = models.ForeignKey(StaffForeman, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Прораб")
     status = models.ForeignKey(ConstructionSiteStatus, on_delete=models.SET_NULL, null=True, verbose_name="Статус объекта")
     def __str__(self): return f"{self.address} ({self.foreman}) - {self.status}"
     class Meta:
