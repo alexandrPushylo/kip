@@ -709,6 +709,7 @@ def show_today_applications(request, day):
         if (_drv, _tech, desc) not in app_list:
             app_list.append((_drv, _tech, desc))
     out["today_technic_applications"] = app_list
+    out["priority_list"] = get_priority_list(current_day)
 
     if request.method == 'POST':
         prior_id_list = request.POST.getlist('prior_id')
