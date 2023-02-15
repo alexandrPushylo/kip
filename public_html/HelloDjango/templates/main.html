@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block indicator %}
 {% if post == 'admin' %}
     {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' cw_day %}" class="btn btn-sm btn-danger ">Недостаток техники</a>
