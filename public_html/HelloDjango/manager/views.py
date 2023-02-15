@@ -761,7 +761,7 @@ def create_new_application(request, id_application):
     out['work_TD_list'] = get_work_TD_list(current_application.date, 0)
     tech_driver_list = TechnicDriver.objects.filter(date=current_date, status=True)
     tech_name_list = TechnicName.objects.all().order_by('name')
-    work_tech_name_list = TechnicDriver.objects.filter(date=current_date, driver__isnull=False).values_list('technic__name__name').distinct()
+    work_tech_name_list = TechnicDriver.objects.filter(date=current_date, driver__isnull=False, status=True).values_list('technic__name__name').distinct()
     work_tech_name_list = [_[0] for _ in work_tech_name_list]
     out['work_tech_name_list'] = work_tech_name_list
 
