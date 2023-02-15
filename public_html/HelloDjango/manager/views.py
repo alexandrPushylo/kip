@@ -465,10 +465,7 @@ def Technic_Driver_view(request, day):
 
     work_driver_list = DriverTabel.objects.filter(date=current_day, status=True)
     if work_driver_list.count()==0:
-        # return HttpResponseRedirect('/tabel_driver/next_day')
-        raise 'work_driver_list is empty'################
-######################
-
+        return HttpResponse('work_driver_list is empty')
     tech_drv_list_today = TechnicDriver.objects.filter(date=TODAY)
 
     if TechnicDriver.objects.filter(date=current_day).count() == 0:
@@ -563,7 +560,6 @@ def clear_application_view(request, id_application):
 def show_applications_view(request, day, id_user=None):
     if request.user.is_anonymous:
         return HttpResponseRedirect('/')
-
     current_day = convert_str_to_date(day)
     if not current_day:
         return HttpResponseRedirect('/')
@@ -719,7 +715,7 @@ def show_today_applications(request, day):
         priority_list = request.POST.getlist('priority')
         description_list = request.POST.getlist('descr')
 
-        for id_p, pr, desc in zip(prior_id_list,priority_list,description_list):
+        for id_p, pr, desc in zip(prior_id_list, priority_list, description_list):
             app = ApplicationTechnic.objects.get(id=id_p)
             app.priority = pr
             app.description = desc
@@ -770,9 +766,9 @@ def create_new_application(request, id_application):
     _tech_drv = []
     for _tech_name in tech_name_list:
         t_d = tech_driver_list.filter(technic__name=_tech_name, driver__isnull=False).values_list('id','driver__driver__user__last_name').order_by('driver__driver__user__last_name')
-        _n = _tech_name.name.replace(' ','').replace('.','')
-        if (_n,_tech_name.name,t_d) not in _tech_drv:
-            _tech_drv.append((_n,_tech_name.name,t_d))
+        _n = _tech_name.name.replace(' ', '').replace('.', '')
+        if (_n, _tech_name.name, t_d) not in _tech_drv:
+            _tech_drv.append((_n, _tech_name.name, t_d))
     out['D'] = _tech_drv
 
     _tech_drv2 = []
@@ -793,7 +789,7 @@ def create_new_application(request, id_application):
         driver_list = request.POST.getlist('io_driver')###
         description_app_list = request.POST.getlist('description_app_list')
 
-        for i in get_difference(set([i[0] for i in list_of_vehicles.filter().values_list('id')]),set(int(i) for i in id_app_tech)):
+        for i in get_difference(set([i[0] for i in list_of_vehicles.filter().values_list('id')]), set(int(i) for i in id_app_tech)):
             ApplicationTechnic.objects.filter(app_for_day=current_application, id=i).delete()
 
         work_TD_list_F_saved = get_work_TD_list(current_application.date, 0, True)
