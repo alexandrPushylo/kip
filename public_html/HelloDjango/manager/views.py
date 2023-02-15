@@ -100,7 +100,7 @@ def driver_app_list_view(request, day):
     current_app_tech = ApplicationTechnic.objects.filter(
         technic_driver__status=True,
         app_for_day__date=current_day,
-        app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['approved']))
+        app_for_day__status=ApplicationStatus.objects.get(status=STATUS_AP['send']))
     current_driver_list = DriverTabel.objects.filter(status=True,
                                                      date=current_day,
                                                      technicdriver__status=True).distinct().order_by('driver__user__last_name')
@@ -594,13 +594,22 @@ def show_applications_view(request, day, id_user=None):
                                                           Q(status = ApplicationStatus.objects.get(
                                                               status=STATUS_AP['submitted'])) |
                                                           Q(status = ApplicationStatus.objects.get(
-                                                              status=STATUS_AP['approved']))
+                                                              status=STATUS_AP['approved']))|
+                                                          Q(status=ApplicationStatus.objects.get(
+                                                              status=STATUS_AP['send']))
                                                       ))
 
         out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day)
         out['work_TD_list'] = get_work_TD_list(current_day)
-        out['submitted_app_list'] = ApplicationToday.objects.filter(
-            date=current_day, status=ApplicationStatus.objects.get(status=STATUS_AP['submitted']))
+        if ApplicationToday.objects.filter(date=current_day,
+                                           status=ApplicationStatus.objects.get(
+                                               status=STATUS_AP['submitted'])).count() != 0:
+            out['submitted_app_list'] = True
+        if ApplicationToday.objects.filter(date=current_day,
+                                           status=ApplicationStatus.objects.get(
+                                               status=STATUS_AP['send'])).count() != 0:
+            out['send_app_list'] = True
+
 
         driver_table_list = DriverTabel.objects.filter(date=current_day).order_by('driver__user__last_name')
 
@@ -666,7 +675,7 @@ def show_application_for_driver(request, day, id_user=None):
     applications = ApplicationTechnic.objects.filter(app_for_day__date=current_day,
                                                      technic_driver__driver__driver__user=current_user,
                                                      app_for_day__status=ApplicationStatus.objects.get(
-                                                         status=STATUS_AP['approved'])).order_by('priority')
+                                                         status=STATUS_AP['send'])).order_by('priority')
 
     out['applications'] = applications
 
@@ -944,6 +953,19 @@ def logout_view(request):
 
 
 # ------------------SUPPORT FUNCTION-------------------------------
+def send_all_applications(request, day):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect('/')
+    if is_admin(request.user):
+        current_day = convert_str_to_date(day)
+        current_applications = ApplicationToday.objects.filter(
+            status=ApplicationStatus.objects.get(status=STATUS_AP['approved']), date=current_day)
+        for app in current_applications:
+            app.status = ApplicationStatus.objects.get(status=STATUS_AP['send'])
+            app.save()
+    return HttpResponseRedirect(f'/applications/{day}')
+
+
 def approv_all_applications(request, day):
     if request.user.is_anonymous:
         return HttpResponseRedirect('/')
@@ -1142,7 +1164,14 @@ def success_application(request, id_application):
         return HttpResponseRedirect('/')
     current_application = ApplicationToday.objects.get(id=id_application)
     if is_admin(request.user):
-        current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
+        approved = ApplicationStatus.objects.get(status=STATUS_AP['approved'])
+        send = ApplicationStatus.objects.get(status=STATUS_AP['send'])
+        _status = current_application.status.status
+
+        if _status == STATUS_AP['submitted']:
+            current_application.status = approved
+        elif _status == STATUS_AP['approved']:
+            current_application.status = send
     else:
         current_application.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
     current_application.save()

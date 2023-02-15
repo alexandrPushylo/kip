@@ -11,7 +11,7 @@ TODAY = date.today()
 TOMORROW = TODAY + ONE_DAY
 choice_day = {'today': TODAY, 'next_day': TOMORROW}
 dict_Staff = {'admin': 'Администратор', 'foreman': 'Прораб', 'master': 'Мастер', 'driver': 'Водитель', 'mechanic': 'Механик', 'employee_supply': 'Снабжение'}
-status_application = {'absent': 'Отсутствует', 'saved': 'Сохранена', 'submitted': 'Подана', 'approved': 'Одобрена'}
+status_application = {'absent': 'Отсутствует', 'saved': 'Сохранена', 'submitted': 'Подана', 'approved': 'Одобрена', 'send': 'Отправлена'}
 status_constr_site = {'closed': 'Закрыт', 'opened': 'Открыт'}
 
 #--FUNCTIONS-------------------------------------------------
