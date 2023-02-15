@@ -618,9 +618,9 @@ def show_applications_view(request, day, id_user=None):
 
         if request.POST.get('panel'):
             _flag = request.POST.get('panel')
+            _flag = str(_flag).capitalize()
             set_var(f'panel_{request.user.id}', value=request.user.id, flag=_flag)
         out['var_drv_panel'] = get_var(f'panel_{request.user.id}')
-
 
     if is_foreman(current_user):
         _foreman = StaffForeman.objects.get(user=current_user).user
@@ -640,7 +640,7 @@ def show_applications_view(request, day, id_user=None):
     for appToday in app_for_day.order_by('construction_site__address'):
         appTech = ApplicationTechnic.objects.filter(app_for_day=appToday)
         out['today_applications_list'].append({'app_today': appToday, 'apps_tech': appTech})
-        if appTech.count()==0:
+        if appTech.count() == 0:
             appToday.status = ApplicationStatus.objects.get(status=STATUS_AP['absent'])
 
     if id_user:

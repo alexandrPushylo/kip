@@ -83,16 +83,6 @@
                             text-primary{% endif %}
                             ">({{ v.technic_driver.driver.driver }})</div>
                     </div>
-{#                <h6 class="card-text#}
-{#                        {% if v.technic_driver.technic.name.name in conflicts_vehicles_list %}#}
-{#                        text-danger#}
-{#                        {% elif v.id in conf_app_id_list %}#}
-{#                        text-danger#}
-{#                        {% elif v.technic_driver.id in work_TD_list %}#}
-{#                        text-primary#}
-{#                        {% endif %}">{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})#}
-{##}
-{#                </h6>#}
 
                   {% if v.description %}
                 <textarea class="form-control app_description" readonly>{{ v.description }}</textarea>
@@ -128,7 +118,7 @@
     </div>
     </div>
 
-    {% if post == 'admin' %}
+    {% if post == 'admin' %}{% csrf_token %}
     <div class="driver_panel container col-auto   position-fixed end-0 "style="margin-top: -45px; height: 90vh;" {% if var_drv_panel.value == user.id|slugify and var_drv_panel.flag %} hidden="" {% endif %}>
         <div class="card-body  overflow-auto "style="height: 90%" >
 
@@ -184,27 +174,7 @@
     <a href="{% url 'show_today_applications' cw_day  %}"  class="btn  btn-outline-secondary active" aria-current="page">Все заявки</a>
 </div>
     {% if post == 'admin' %}
-    <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2" onclick="
-        let f;
-            if($('.driver_panel').is(':hidden')){
-            $('.driver_panel').prop('hidden',false)
-            f='False'
-        }else {
-            $('.driver_panel').prop('hidden',true)
-            f='True'
-        }
-
-            $.ajax({
-        type: 'POST',
-        mode: 'same-origin',
-        url: '/applications/{{ cw_day }}',
-        data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-                panel: f
-        }
-    })
-    return false
-"><i class="fa-solid fa-list"></i> </button>
+    <button role="button" class="btn_driver_panel btn btn-outline-light  col-auto position-absolute end-0 m-2"><i class="fa-solid fa-list"></i> </button>
     {% endif %}
 {% endblock %}
 
