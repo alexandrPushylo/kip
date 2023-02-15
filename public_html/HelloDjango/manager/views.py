@@ -124,13 +124,17 @@ def conflict_correction_view(request, day, id_applications):
     out['tech_app_list'] = tech_app_list.order_by('technic_driver__driver__driver__user__last_name')
     out['conflicts_vehicles_list'] = get_conflicts_vehicles_list(current_day, 1)
     out['work_TD_list'] = get_work_TD_list(current_day, 0)
-    out["uniq_name_of_vehicles"] = TechnicName.objects.all().order_by('name')
-    vehicle_and_driver = TechnicDriver.objects.filter(date=current_day, driver__isnull=False).values_list(
+    # out["uniq_name_of_vehicles"] = TechnicName.objects.all().order_by('name')
+
+    vehicle_and_driver = TechnicDriver.objects.filter(date=current_day, driver__isnull=False, status=True).values_list(
         'technic__name__name',
         'driver__driver__user__last_name',
         'id'
     )
     out['vehicle_and_driver'] = vehicle_and_driver
+    out["uniq_name_of_vehicles"] = TechnicDriver.objects.filter(date=current_day, driver__isnull=False, status=True).values_list(
+        'technic__name__name',
+    ).order_by('technic__name__name').distinct()
 
     if request.method == 'POST':
         app_id_list = request.POST.getlist('id_list')
@@ -757,7 +761,7 @@ def create_new_application(request, id_application):
     out['work_TD_list'] = get_work_TD_list(current_application.date, 0)
     tech_driver_list = TechnicDriver.objects.filter(date=current_date, status=True)
     tech_name_list = TechnicName.objects.all().order_by('name')
-    work_tech_name_list = TechnicDriver.objects.filter(date=current_date, driver__isnull=False).values_list('technic__name__name').distinct()
+    work_tech_name_list = TechnicDriver.objects.filter(date=current_date, driver__isnull=False, status=True).values_list('technic__name__name').distinct()
     work_tech_name_list = [_[0] for _ in work_tech_name_list]
     out['work_tech_name_list'] = work_tech_name_list
 
@@ -850,6 +854,7 @@ def signin_view(request):
 
     if request.method == 'POST':
         username = request.POST['username']
+        username = str(username).strip(' ')
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
