@@ -30,6 +30,7 @@
         </h3>
     </div>
     {% endblock %}
+
 <div class="container container-fluid mx-auto row">
     <div class="container mt-5 col-auto ">
         <div class="row">
@@ -78,7 +79,7 @@
                         text-danger{% endif %}
                             ">{{ v.technic_driver.technic.name }}</div>
                 <div class="card-text fs-6 col-auto
-                            {% if v.technic_driver.id in work_TD_list %}
+                            {% if v.id in priority_list %}
                             text-primary{% endif %}
                             ">({{ v.technic_driver.driver.driver }})</div>
                     </div>

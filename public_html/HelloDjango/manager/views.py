@@ -618,6 +618,8 @@ def show_applications_view(request, day, id_user=None):
             l_out.append((_drv, count, attach_drv, tech_drv))
         out["DRV_LIST"] = l_out
 
+        out["priority_list"] = get_priority_list(current_day)
+
         if request.POST.get('panel'):
             _flag = request.POST.get('panel')
             _flag = str(_flag).capitalize()
@@ -969,6 +971,23 @@ def submitted_all_applications(request, day):
             app.status = ApplicationStatus.objects.get(status=STATUS_AP['submitted'])
             app.save()
     return HttpResponseRedirect(f'/applications/{day}')
+
+
+def get_priority_list(current_day):
+    """
+    return ApplicationTechnic_id
+    """
+    l = []
+    app_tech = ApplicationTechnic.objects.filter(app_for_day__date=current_day).values_list('priority', 'technic_driver_id', 'id').order_by('technic_driver_id')
+    ll = [(int(a[0]), a[1]) for a in app_tech]
+    for _app in set(ll):
+        count = ll.count(_app)
+        if count > 1:
+            _l = [q[0] for q in ApplicationTechnic.objects.filter(app_for_day__date=current_day,
+                                                    priority=_app[0],
+                                                    technic_driver_id=_app[1]).distinct().values_list('id')]
+            l.extend(_l)
+    return l
 
 
 def get_work_TD_list(current_day, c_in=1, F_saved=False):
