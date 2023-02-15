@@ -187,7 +187,7 @@ def show_construction_sites_view(request):
     out = {}
     get_prepare_data(out, request)
 
-    all_constr_site_list = ConstructionSite.objects.all().order_by('address')
+    all_constr_site_list = ConstructionSite.objects.all().order_by('address').exclude(address='')
 
     if is_admin(request.user):
         construction_sites_list = all_constr_site_list
@@ -1143,14 +1143,16 @@ def get_current_day(selected_day: str):
             if _day.status:
                 return _day.date
     else:
-        return TODAY
+        return selected_day
 
 
 def get_CH_day(day):
     if str(day) == str(get_current_day('next_day')):
         return 'next_day'
-    else:
+    elif str(day) == str(get_current_day('last_day')):
         return 'last_day'
+    else:
+        return str(day)
 
 
 def prepare_driver_table(day):
