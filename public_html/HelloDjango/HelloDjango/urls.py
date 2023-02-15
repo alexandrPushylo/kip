@@ -29,8 +29,10 @@ from manager.views import show_application_for_driver
 from manager.views import success_application
 from manager.views import conflict_resolution_view
 from manager.views import conflict_correction_view
+
 from manager.views import approv_all_applications
 from manager.views import submitted_all_applications
+from manager.views import send_all_applications
 
 from manager.views import show_construction_sites_view
 from manager.views import edit_construction_sites_view
@@ -85,7 +87,7 @@ urlpatterns = [
     path('info_app/<int:id_application>', show_info_application, name="show_info_application"),
     path('new_app/<int:id_application>', create_new_application, name="add_application"),
     path('clear_app/<int:id_application>', clear_application_view, name='clear_application'),
-    path('success_app/<int:id_application>', success_application, name='success_application'),
+
     path('conflict_resolution/<str:day>', conflict_resolution_view, name="conflict_resolution"),
     path('conflict_correction/<str:day>/<str:id_applications>', conflict_correction_view, name="conflict_correction"),
 
@@ -94,8 +96,8 @@ urlpatterns = [
     path('driver_app_list/<str:day>', driver_app_list_view, name='driver_app_list'),
     path('foreman_app_list/<str:day>', foreman_app_list_view, name='foreman_app_list'),
 
-
-
+    path('success_app/<int:id_application>', success_application, name='success_application'),
+    path('send_all_applications/<str:day>', send_all_applications, name='send_all_applications'),
     path('approv_all_applications/<str:day>', approv_all_applications, name='approv_all_applications'),
     path('submitted_all_applications/<str:day>', submitted_all_applications, name='submitted_all_applications'),
     re_path(r'.*', redirect_view),
