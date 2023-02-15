@@ -607,7 +607,7 @@ def show_applications_view(request, day, id_user=None):
             out['submitted_app_list'] = True
         if ApplicationToday.objects.filter(date=current_day,
                                            status=ApplicationStatus.objects.get(
-                                               status=STATUS_AP['send'])).count() != 0:
+                                               status=STATUS_AP['approved'])).count() != 0:
             out['send_app_list'] = True
 
 
