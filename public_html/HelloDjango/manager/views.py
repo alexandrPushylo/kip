@@ -618,6 +618,7 @@ def show_applications_view(request, day, id_user=None):
 
         if request.POST.get('panel'):
             _flag = request.POST.get('panel')
+            _flag = str(_flag).capitalize()
             set_var(f'panel_{request.user.id}', value=request.user.id, flag=_flag)
         out['var_drv_panel'] = get_var(f'panel_{request.user.id}')
 
