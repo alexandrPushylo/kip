@@ -559,6 +559,8 @@ def show_applications_view(request, day, id_user=None):
         return HttpResponseRedirect('/')
 
     current_day = convert_str_to_date(day)
+    if not current_day:
+        return HttpResponseRedirect('/')
     out = {"constr_site_list": []}
 
     if id_user:
@@ -810,6 +812,7 @@ def create_new_application(request, id_application):
                 technic__name__name=vehicle_list[i],
                 date=current_date,
                 status=True)
+
             l_of_v.technic_driver = v_d_app
             l_of_v.description = description_app_list[i]
             l_of_v.save()
