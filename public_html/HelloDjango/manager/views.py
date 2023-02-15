@@ -161,7 +161,6 @@ def conflict_resolution_view(request, day):
     lack_list = get_conflicts_vehicles_list(current_day, lack=True)
     out['lack_list'] = lack_list
     conflict_list = get_conflicts_vehicles_list(current_day)
-    print(conflict_list)
     out['conflicts_list'] = conflict_list
     out['work_TD_list'] = get_work_TD_list(current_day)
 
@@ -585,7 +584,6 @@ def show_applications_view(request, day, id_user=None):
                 _app.save()
     else:
         if construction_site_list.count() < applications_today_list_all.count():
-            print("need delete")
             applications_today_list_all.exclude(construction_site__in=construction_site_list).delete()
         else:
             print("OK")
