@@ -34,6 +34,9 @@
                     <label><b class="fs-5 me-5">{{ v.0 }}</b>
                     <a href="/conflict_correction/{{ cw_day }}/{% for i in v.1 %}{{ i.id }},{% endfor %}" class="btn btn-outline-secondary  col-auto " aria-current="page">Редактировать</a>
                     </label>
+                    {% for l in lack_list %}{% if v.0 in l.0 %}
+                        <p class="text-danger mt-1">Не хватает {{ l.1 }} ед.  {{ v.0 }}</p>
+                    {% endif %}{% endfor %}
                     <hr>
                     {% for d in v.1 %}
                         <label>{{ d.app_for_day__construction_site__address }} ({{ d.app_for_day__construction_site__foreman__user__last_name }})</label>

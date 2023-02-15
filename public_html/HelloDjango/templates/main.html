@@ -3,7 +3,7 @@
 
 {% block indicator %}
 {% if post == 'admin' %}
-    {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' cw_day %}" class="btn btn-sm btn-danger ">Конфликты</a>
+    {% if conflicts_vehicles_list %}<a href="{% url 'conflict_resolution' cw_day %}" class="btn btn-sm btn-danger ">Недостаток техники</a>
      {% elif not conflicts_vehicles_list and submitted_app_list %}<a href="{% url 'approv_all_applications' cw_day %}" class="btn btn-sm btn-success ">Одобрить все заявки</a>
     {% else %}{% endif %}
 {% elif post == 'foreman' or 'master' or 'employee_supply' %}
@@ -71,16 +71,29 @@
           <hr style="border-width: medium; border-color: green">
               <h6 class="card-text"><label><b>Список техники:</b></label> </h6>
               {% for v in a.apps_tech %}
-                <h6 class="card-text
+                  <div class="row">
+                <div class="card-text fs-6 col-auto
                         {% if v.technic_driver.technic.name.name in conflicts_vehicles_list %}
                         text-danger
                         {% elif v.id in conf_app_id_list %}
-                        text-danger
-                        {% elif v.technic_driver.id in work_TD_list %}
-                        text-primary
-                        {% endif %}">{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})
+                        text-danger{% endif %}
+                            ">{{ v.technic_driver.technic.name }}</div>
+                <div class="card-text fs-6 col-auto
+                            {% if v.technic_driver.id in work_TD_list %}
+                            text-primary{% endif %}
+                            ">({{ v.technic_driver.driver.driver }})</div>
+                    </div>
+{#                <h6 class="card-text#}
+{#                        {% if v.technic_driver.technic.name.name in conflicts_vehicles_list %}#}
+{#                        text-danger#}
+{#                        {% elif v.id in conf_app_id_list %}#}
+{#                        text-danger#}
+{#                        {% elif v.technic_driver.id in work_TD_list %}#}
+{#                        text-primary#}
+{#                        {% endif %}">{{ v.technic_driver.technic.name }} ({{ v.technic_driver.driver.driver }})#}
+{##}
+{#                </h6>#}
 
-                </h6>
                   {% if v.description %}
                 <textarea class="form-control app_description" readonly>{{ v.description }}</textarea>
                 {%endif%}

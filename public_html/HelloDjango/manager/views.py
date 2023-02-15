@@ -158,8 +158,10 @@ def conflict_resolution_view(request, day):
     current_day = convert_str_to_date(day)
     get_prepare_data(out, request, current_day)
     out["date_of_target"] = current_day
-
+    lack_list = get_conflicts_vehicles_list(current_day, lack=True)
+    out['lack_list'] = lack_list
     conflict_list = get_conflicts_vehicles_list(current_day)
+    print(conflict_list)
     out['conflicts_list'] = conflict_list
     out['work_TD_list'] = get_work_TD_list(current_day)
 
@@ -986,7 +988,12 @@ def get_work_TD_list(current_day, c_in=1, F_saved=False):
     return out
 
 
-def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationtech
+def get_conflicts_vehicles_list(current_day, c_in=0, all=False, lack=False):   #applicationtech
+    '''
+        c_in - количество тех. которое может быть заказано, прежде чем попасть в список
+        all - сравнение с всей в том числе нероботающей техникой
+        lack - получить количество недостоющей техники
+    '''
     out = {}
     l = []
     if all:
@@ -1009,7 +1016,11 @@ def get_conflicts_vehicles_list(current_day, c_in=0, all=False):   #applicationt
     work_app_tech_list = [_[1] for _ in app_tech]
     for i in set(work_app_tech_list):
         if work_app_tech_list.count(i)+c_in > out[i]:
-            l.append(i)
+            if lack:
+                _c = work_app_tech_list.count(i) - out[i]
+                l.append((i, _c))
+            else:
+                l.append(i)
     return l
 
 
