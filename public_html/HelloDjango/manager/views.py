@@ -1196,3 +1196,6 @@ def set_var(name, value=None, flag=False):
     _var.flag = flag
     _var.save()
     return _var
+
+def redirect_view(request):
+    return render(request, 'REDIRECT.html', {})
