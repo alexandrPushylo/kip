@@ -584,7 +584,6 @@ def show_applications_view(request, day, id_user=None):
                 _app.save()
     else:
         if construction_site_list.count() < applications_today_list_all.count():
-            print("need delete")
             applications_today_list_all.exclude(construction_site__in=construction_site_list).delete()
         else:
             print("OK")
