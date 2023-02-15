@@ -51,7 +51,7 @@ def append_in_hos_tech(request, id_drv):
         return HttpResponseRedirect(f'/applications/{date}')
 
     constr_site, _ = ConstructionSite.objects.get_or_create(
-        address='Хоз. работы',
+        address='',
         foreman=None)
     constr_site.status=ConstructionSiteStatus.objects.get(status=STATUS_CS['opened'])
     constr_site.save()
@@ -71,7 +71,7 @@ def append_in_hos_tech(request, id_drv):
     ApplicationTechnic.objects.get_or_create(
         app_for_day=app_for_day,
         technic_driver=technic_driver,
-        description=''
+        description='Хоз. работы или за свой счет'
     )
 
     return HttpResponseRedirect(f"/applications/{date}")
