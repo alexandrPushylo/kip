@@ -161,7 +161,6 @@ def conflict_resolution_view(request, day):
     lack_list = get_conflicts_vehicles_list(current_day, lack=True)
     out['lack_list'] = lack_list
     conflict_list = get_conflicts_vehicles_list(current_day)
-    print(conflict_list)
     out['conflicts_list'] = conflict_list
     out['work_TD_list'] = get_work_TD_list(current_day)
 
