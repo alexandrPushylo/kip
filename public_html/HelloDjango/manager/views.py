@@ -762,7 +762,7 @@ def create_new_application(request, id_application):
     current_application = ApplicationToday.objects.get(id=id_application)
     current_date = current_application.date
     # get_prepare_data(out, request, selected_day=get_CH_day(current_application.date))
-    get_prepare_data(out, request, current_date=current_date)
+    get_prepare_data(out, request, current_day=current_date)
     out["current_user"] = current_user
     out["construction_site"] = current_application.construction_site
     out["date_of_target"] = str(current_application.date)
